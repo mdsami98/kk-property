@@ -1,0 +1,52 @@
+
+# dependencies
+**/node_modules
+
+/*/docker-compose.yml
+/*/*/docker-compose.yml
+
+#logs
+**/logs
+
+#public resources
+/public
+/tmp
+~/
+# testing
+/coverage
+
+
+# misc
+.DS_Store
+.
+package-lock.json
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+yarn.lock
+
+.idea
+.vscode
+
+#docker
+/*/docker/docker-compose.yml
+/*/*/docker/docker-compose.yml
+
+
+#build
+**/build/
+**/dist/
+**/dist-ssr
+**/.vite/
+.gitlab-ci-local/
+
+# Tools
+/*/*/.env
+
+# pnpm
+**/.pnpm-store
+
+**/.test_suite_analysis
+
+**/test_suite_analysis
+**/managed_context
