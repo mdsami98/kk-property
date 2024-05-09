@@ -2,8 +2,7 @@
 # dependencies
 **/node_modules
 
-/*/docker-compose.yml
-/*/*/docker-compose.yml
+
 
 #logs
 **/logs

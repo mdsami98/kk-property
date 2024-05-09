@@ -1,0 +1,63 @@
+version: '3.5'
+
+services:
+    backend:
+        build:
+            context: ../backend
+            dockerfile: Dockerfile
+        container_name: property-backend
+        environment:
+            - PORT=2000
+            - DB_HOST=db
+            - DB_NAME=property_db
+            - DB_USER=root
+            - DB_PASSWORD=root123
+        ports:
+            - '2000:9000'
+        command: sh -c "npm install &&  npm run start:dev"
+
+        volumes:
+            - ../backend:/app
+        depends_on:
+            - db
+
+    frontend:
+        build:
+            context: ../frontend
+            dockerfile: Dockerfile
+        container_name: property-frontend
+        # environment:
+        #     - PORT=9000
+        ports:
+            - '3000:3000'
+        command: sh -c "npm install &&  npm run dev"
+
+        volumes:
+            - ../frontend:/app
+        depends_on:
+            - backend
+
+    db:
+        image: postgres:14
+        container_name: property-db
+        restart: always
+        mem_limit: 1g
+        environment:
+            POSTGRES_PASSWORD: root123
+            POSTGRES_DB: db
+            POSTGRES_USER: root
+        volumes:
+            - ../backend/pgdata:/var/lib/postgresql/data
+
+    db-adminer:
+        image: adminer
+        container_name: property-adminer
+        links:
+            - db:db
+        ports:
+            - 7000:8080
+        depends_on:
+            - db
+
+networks:
+    default:
