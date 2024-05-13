@@ -11,10 +11,18 @@ services:
             - DB_HOST=db
             - DB_NAME=property_db
             - DB_USER=root
-            - DB_PASSWORD=root123
+            - DB_PASS=root123
+            - NODE_ENV=development
+            - JWT_SECRET=HJZwd2wiOtjsNZDhqEBf
+            - JWT_ACCESS_EXPIRATION_MINUTES=5
+            - JWT_REFRESH_EXPIRATION_DAYS=30
+            - LOG_FOLDER=logs/
+            - LOG_FILE=%DATE%-app-log.log
+            - LOG_LEVEL=error
+
         ports:
-            - '2000:9000'
-        command: sh -c "npm install &&  npm run start:dev"
+            - '2000:2000'
+        command: sh -c "npm install && npm start"
 
         volumes:
             - ../backend:/app
