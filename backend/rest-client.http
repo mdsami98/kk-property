@@ -1,9 +1,0 @@
-
-
-GET http://localhost:3000/songs
-
-
-GET http://localhost:3000/songs/1
-
-
-PUT http://localhost:3000/songs/1
