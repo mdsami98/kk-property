@@ -18,7 +18,9 @@ class AuthController {
             let tokens = {};
             const { status } = user.response;
             if (user.response.status) {
-                tokens = await this.tokenService.generateAuthTokens(user.response.data);
+                tokens = await this.tokenService.generateAuthTokens(
+                    user.response.data
+                );
             }
 
             const { message, data } = user.response;
@@ -31,7 +33,9 @@ class AuthController {
 
     checkEmail = async (req, res) => {
         try {
-            const isExists = await this.userService.isEmailExists(req.body.email.toLowerCase());
+            const isExists = await this.userService.isEmailExists(
+                req.body.email.toLowerCase()
+            );
             res.status(isExists.statusCode).send(isExists.response);
         } catch (e) {
             logger.error(e);
@@ -44,7 +48,7 @@ class AuthController {
             const { email, password } = req.body;
             const user = await this.authService.loginWithEmailPassword(
                 email.toLowerCase(),
-                password,
+                password
             );
             const { message } = user.response;
             const { data } = user.response;
@@ -54,7 +58,13 @@ class AuthController {
             if (user.response.status) {
                 tokens = await this.tokenService.generateAuthTokens(data);
             }
-            res.status(user.statusCode).send({ status, code, message, data, tokens });
+            res.status(user.statusCode).send({
+                status,
+                code,
+                message,
+                data,
+                tokens
+            });
         } catch (e) {
             logger.error(e);
             res.status(httpStatus.BAD_GATEWAY).send(e);
@@ -70,9 +80,11 @@ class AuthController {
         try {
             const refreshTokenDoc = await this.tokenService.verifyToken(
                 req.body.refresh_token,
-                tokenTypes.REFRESH,
+                tokenTypes.REFRESH
             );
-            const user = await this.userService.getUserByUuid(refreshTokenDoc.user_uuid);
+            const user = await this.userService.getUserByUuid(
+                refreshTokenDoc.user_uuid
+            );
             if (user == null) {
                 res.status(httpStatus.BAD_GATEWAY).send('User Not Found!');
             }
@@ -87,7 +99,19 @@ class AuthController {
 
     changePassword = async (req, res) => {
         try {
-            const responseData = await this.userService.changePassword(req.body, req.user.uuid);
+            const responseData = await this.userService.changePassword(
+                req.body,
+                req.user.uuid
+            );
+            res.status(responseData.statusCode).send(responseData.response);
+        } catch (e) {
+            logger.error(e);
+            res.status(httpStatus.BAD_GATEWAY).send(e);
+        }
+    };
+    getUser = async (req, res) => {
+        try {
+            const responseData = await this.userService.getUser(req);
             res.status(responseData.statusCode).send(responseData.response);
         } catch (e) {
             logger.error(e);

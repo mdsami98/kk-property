@@ -18,9 +18,13 @@ class UserService {
      */
     createUser = async (userBody) => {
         try {
-            let message = 'Successfully Registered the account! Please Verify your email.';
+            let message =
+                'Successfully Registered the account! Please Verify your email.';
             if (await this.userDao.isEmailExists(userBody.email)) {
-                return responseHandler.returnError(httpStatus.BAD_REQUEST, 'Email already taken');
+                return responseHandler.returnError(
+                    httpStatus.BAD_REQUEST,
+                    'Email already taken'
+                );
             }
             const uuid = uuidv4();
             userBody.email = userBody.email.toLowerCase();
@@ -33,16 +37,26 @@ class UserService {
 
             if (!userData) {
                 message = 'Registration Failed! Please Try again.';
-                return responseHandler.returnError(httpStatus.BAD_REQUEST, message);
+                return responseHandler.returnError(
+                    httpStatus.BAD_REQUEST,
+                    message
+                );
             }
-          
+
             userData = userData.toJSON();
             delete userData.password;
 
-            return responseHandler.returnSuccess(httpStatus.CREATED, message, userData);
+            return responseHandler.returnSuccess(
+                httpStatus.CREATED,
+                message,
+                userData
+            );
         } catch (e) {
             logger.error(e);
-            return responseHandler.returnError(httpStatus.BAD_REQUEST, 'Something went wrong!');
+            return responseHandler.returnError(
+                httpStatus.BAD_REQUEST,
+                'Something went wrong!'
+            );
         }
     };
 
@@ -55,7 +69,10 @@ class UserService {
     isEmailExists = async (email) => {
         const message = 'Email found!';
         if (!(await this.userDao.isEmailExists(email))) {
-            return responseHandler.returnError(httpStatus.BAD_REQUEST, 'Email not Found!!');
+            return responseHandler.returnError(
+                httpStatus.BAD_REQUEST,
+                'Email not Found!!'
+            );
         }
         return responseHandler.returnSuccess(httpStatus.OK, message);
     };
@@ -70,17 +87,23 @@ class UserService {
         let user = await this.userDao.findOneByWhere({ uuid });
 
         if (!user) {
-            return responseHandler.returnError(httpStatus.NOT_FOUND, 'User Not found!');
+            return responseHandler.returnError(
+                httpStatus.NOT_FOUND,
+                'User Not found!'
+            );
         }
 
         if (data.password !== data.confirm_password) {
             return responseHandler.returnError(
                 httpStatus.BAD_REQUEST,
-                'Confirm password not matched',
+                'Confirm password not matched'
             );
         }
 
-        const isPasswordValid = await bcrypt.compare(data.old_password, user.password);
+        const isPasswordValid = await bcrypt.compare(
+            data.old_password,
+            user.password
+        );
         user = user.toJSON();
         delete user.password;
         if (!isPasswordValid) {
@@ -90,18 +113,46 @@ class UserService {
         }
         const updateUser = await this.userDao.updateWhere(
             { password: bcrypt.hashSync(data.password, 8) },
-            { uuid },
+            { uuid }
         );
 
         if (updateUser) {
             return responseHandler.returnSuccess(
                 httpStatus.OK,
                 'Password updated Successfully!',
-                {},
+                {}
             );
         }
 
-        return responseHandler.returnError(httpStatus.BAD_REQUEST, 'Password Update Failed!');
+        return responseHandler.returnError(
+            httpStatus.BAD_REQUEST,
+            'Password Update Failed!'
+        );
+    };
+
+    getUser = async (req) => {
+        const { uuid } = req.user;
+        let user = await this.userDao.findOneByWhere({ uuid }, [
+            'uuid',
+            'first_name',
+            'last_name',
+            'email',
+            'role',
+            'status'
+        ]);
+
+        if (!user) {
+            return responseHandler.returnError(
+                httpStatus.NOT_FOUND,
+                'User Not found!'
+            );
+        }
+
+        return responseHandler.returnSuccess(
+            httpStatus.OK,
+            'Successfully Get User',
+            user
+        );
     };
 }
 

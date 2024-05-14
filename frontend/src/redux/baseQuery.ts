@@ -5,19 +5,17 @@ import {
     fetchBaseQuery,
     FetchBaseQueryError
 } from '@reduxjs/toolkit/query/react';
-// import {
-//     getCookie,
-//     setCookie,
-//     setCookieForRefresh
-// } from '@/utils/helpers/Cookie';
+import { getCookie, setCookie, setCookieForRefresh } from '@/helpers/Cookie';
 
 const baseQuery = fetchBaseQuery({
-    baseUrl: 'http://localhost:5001/api/',
+    baseUrl: 'http://localhost:2000/api/',
     prepareHeaders: (headers, { getState, endpoint }) => {
-        // const token = getCookie(import.meta.env.REACT_APP_ACCESS_TOKEN);
-        // if (token && endpoint !== 'refresh') {
-        //     headers.set('authorization', `Bearer ${token}`);
-        // }
+        const token = getCookie('access_token');
+        console.log(token);
+
+        if (token && endpoint !== 'refresh') {
+            headers.set('authorization', `Bearer ${token}`);
+        }
 
         return headers;
     }
@@ -36,39 +34,39 @@ const baseQueryWithReAuth: BaseQueryFn<
     FetchBaseQueryError | BackendError
 > = async (args, api, extraOptions) => {
     let result = await baseQuery(args, api, extraOptions);
-    // if (result.error && result.error.status === 401) {
-    //     // try to get a new token
-    //     const refreshToken = getCookie(import.meta.env.REACT_APP_REFRESH_TOKEN);
-    //     const refreshResult: any = await baseQuery(
-    //         {
-    //             method: 'POST',
-    //             url: 'core/refresh-token',
-    //             body: { refresh_token: refreshToken ?? '' }
-    //         },
-    //         { ...api, endpoint: 'refresh' },
-    //         extraOptions
-    //     );
-    //     if (refreshResult.data) {
-    //         setCookieForRefresh(
-    //             import.meta.env.REACT_APP_REFRESH_TOKEN,
-    //             refreshResult.data?.refresh.token
-    //         );
-    //         setCookie(
-    //             import.meta.env.REACT_APP_ACCESS_TOKEN,
-    //             refreshResult.data?.access.token,
-    //             import.meta.env.REACT_APP_ACCESS_TOKEN_VALIDITY
-    //         );
+    if (result.error && result.error.status === 401) {
+        // try to get a new token
+        const refreshToken = getCookie('refresh_token');
+        const refreshResult: any = await baseQuery(
+            {
+                method: 'POST',
+                url: 'auth/refresh-token',
+                body: { refresh_token: refreshToken ?? '' }
+            },
+            { ...api, endpoint: 'refresh' },
+            extraOptions
+        );
+        if (refreshResult.data) {
+            setCookieForRefresh(
+                'refresh_token',
+                refreshResult.data?.refresh.token
+            );
+            setCookie(
+                'access_token',
+                refreshResult.data?.access.token,
+                '1 hour'
+            );
 
-    //         result = await baseQuery(args, api, extraOptions);
-    //     } else {
-    //         return result;
-    //         // api.dispatch({
-    //         //     type: "user/signOut"
-    //         // });
-    //     }
+            result = await baseQuery(args, api, extraOptions);
+        } else {
+            return result;
+            // api.dispatch({
+            //     type: "user/signOut"
+            // });
+        }
 
-    //     return result;
-    // }
+        return result;
+    }
     return result;
 };
 

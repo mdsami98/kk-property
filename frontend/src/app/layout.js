@@ -7,20 +7,21 @@ import { ReduxProvider } from '@/redux/Provider/ReduxProvider';
 
 export default function RootLayout({ children }) {
     const [sidebarOpen, setSidebarOpen] = useState(false);
+
     // const [loading, setLoading] = useState < boolean > true;
 
     // const pathname = usePathname();
 
-    // useEffect(() => {
-    //     setTimeout(() => setLoading(false), 1000);
-    // }, []);
+    useEffect(() => {}, []);
 
     return (
         <html lang='en'>
             <ReduxProvider>
                 <body suppressHydrationWarning={true}>
                     <div className='dark:bg-boxdark-2 dark:text-bodydark'>
-                        <AntdRegistry>{children}</AntdRegistry>
+                        <AntdRegistry>
+                            <div>{children}</div>
+                        </AntdRegistry>
                     </div>
                 </body>
             </ReduxProvider>

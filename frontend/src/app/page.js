@@ -1,5 +1,5 @@
-import DefaultLayout from '@/components/Layouts/DefaultLayout';
+import DefaultLayout from '@/components/Layouts/AdminLayout';
 
 export default function Home() {
-    return <DefaultLayout>sadsa</DefaultLayout>;
+    return <div>User panel</div>;
 }

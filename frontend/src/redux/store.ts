@@ -1,5 +1,5 @@
 import { configureStore } from '@reduxjs/toolkit';
-import { apiSlice } from '@/redux//baseQuery';
+import { apiSlice } from '@/redux/baseQuery';
 import { setupListeners } from '@reduxjs/toolkit/query';
 
 export const store = configureStore({

@@ -2,7 +2,7 @@ import React from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { Metadata } from 'next';
-import DefaultLayout from '@/components/Layouts/DefaultLayout';
+import DefaultLayout from '@/components/Layouts/AdminLayout';
 import LoginForm from '@/components/auth/LoginForm';
 
 export const metadata: Metadata = {

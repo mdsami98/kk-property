@@ -34,8 +34,9 @@ services:
             context: ../frontend
             dockerfile: Dockerfile
         container_name: property-frontend
-        # environment:
-        #     - PORT=9000
+        environment:
+            - APP_ACCESS_TOKEN="token"
+            - APP_REFRESH_TOKEN="refresh"
         ports:
             - '3000:3000'
         command: sh -c "npm install &&  npm run dev"
