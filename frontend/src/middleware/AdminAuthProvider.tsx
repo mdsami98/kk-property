@@ -26,9 +26,7 @@ const AdminAuthProvider = ({ children }: any) => {
             if (role != 0) {
                 redirect('/');
             }
-            dispatch(
-                setCredentials({ user: user.data, isAuthenticated: true })
-            );
+            dispatch(setCredentials(user.data));
         }
     }, [isSuccess, user]);
 

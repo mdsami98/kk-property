@@ -57,11 +57,11 @@ export const checkCookie = (cname: any) => {
     const cookieInfo = getCookie(cname);
 
     if (cookieInfo === '') {
-        return '';
+        return false;
     }
     const decodedJwt = parseJwt(cookieInfo);
     if (decodedJwt.exp * 1000 < Date.now()) {
-        return '';
+        return false;
     }
     return !!cookieInfo;
 };

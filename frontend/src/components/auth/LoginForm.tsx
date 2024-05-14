@@ -2,6 +2,8 @@
 import React from 'react';
 import { useForm } from 'react-hook-form';
 import { useLoginMutation } from '@/redux/slice/auth/authApiSlice';
+import { useRouter } from 'next/navigation';
+import { checkCookie } from '@/helpers/Cookie';
 
 interface IFormInput {
     email: string;
@@ -9,6 +11,7 @@ interface IFormInput {
 }
 
 function LoginForm() {
+    const router = useRouter();
     const {
         register,
         handleSubmit,
@@ -17,17 +20,30 @@ function LoginForm() {
         reset
     } = useForm<IFormInput>();
     const [login] = useLoginMutation();
-    const submitForm = (data) => {
+    const submitForm = (data: any) => {
         login(data)
             .unwrap()
-            .then((response) => {
-                console.log('data');
+            .then((response: any) => {
+                if (response.status) {
+                    const { role } = response.data;
+                    console.log(role);
+                    if (role == 0) {
+                        router.push('/admin');
+                    }
+                    if (role == 1) {
+                        router.push('/');
+                    }
+                }
             })
-            .catch((error) => {});
+            .catch((error: any) => {});
 
         reset();
     };
-    const {} = useLoginMutation();
+    console.log(checkCookie('access_token'));
+    if (checkCookie('access_token')) {
+        router.push('/');
+    }
+
     return (
         <form onSubmit={handleSubmit(submitForm)}>
             <div className='mb-4'>

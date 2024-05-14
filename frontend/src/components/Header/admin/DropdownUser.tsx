@@ -2,8 +2,11 @@ import { useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import React from 'react';
+import { logOut, selectCurrentUser } from '@/redux/slice/auth/authSlice';
+import { useSelector } from 'react-redux';
 
 const DropdownUser = () => {
+    const user = useSelector(selectCurrentUser);
     const [dropdownOpen, setDropdownOpen] = useState(false);
 
     const trigger = useRef<any>(null);
@@ -45,7 +48,7 @@ const DropdownUser = () => {
             >
                 <span className='hidden text-right lg:block'>
                     <span className='block text-sm font-medium text-black dark:text-white'>
-                        Don Jo
+                        {user?.email}
                     </span>
                     <span className='block text-xs'>Admin</span>
                 </span>

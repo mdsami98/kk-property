@@ -4,7 +4,7 @@ import {
     setCookieForRefresh
 } from '@/helpers/Cookie';
 import { apiSlice } from '../../baseQuery';
-
+import { setCredentials } from './authSlice';
 const authAliSlice: any = apiSlice.injectEndpoints({
     endpoints: (build) => ({
         login: build.mutation({
@@ -20,6 +20,7 @@ const authAliSlice: any = apiSlice.injectEndpoints({
                 try {
                     const { data } = await queryFulfilled;
                     console.log(data, 'data');
+                    dispatch(setCredentials({ user: data.data }));
 
                     if (data.status) {
                         setCookie(
