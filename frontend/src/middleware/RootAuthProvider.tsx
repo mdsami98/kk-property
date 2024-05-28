@@ -1,4 +1,5 @@
-'use-client';
+'use client';
+
 import React, { useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 // import Forbidden from "../components/error-page/Forbidden";s
@@ -7,9 +8,8 @@ import { useGetUserQuery } from '../redux/slice/auth/authApiSlice';
 import { redirect } from 'next/navigation';
 import Loader from '../components/common/Loader';
 
-const AdminAuthProvider = ({ children }: any) => {
+const RootAuthProvider = ({ children }: any) => {
     const dispatch = useDispatch();
-    // call user fetch api
     const {
         data: user,
         isLoading,
@@ -21,8 +21,14 @@ const AdminAuthProvider = ({ children }: any) => {
         if (isSuccess) {
             const { role } = user.data;
             console.log(role, 'role');
-            if (role != 0) {
-                redirect('/login');
+            if (role == 0) {
+                redirect('/admin');
+            }
+            if (role == 1) {
+                redirect('/manager');
+            }
+            if (role == 2) {
+                redirect('/investors');
             }
             dispatch(setCredentials(user.data));
         }
@@ -39,8 +45,6 @@ const AdminAuthProvider = ({ children }: any) => {
         // if success return children
         return children;
     }
-
-    redirect('/');
 };
 
-export default AdminAuthProvider;
+export default RootAuthProvider;

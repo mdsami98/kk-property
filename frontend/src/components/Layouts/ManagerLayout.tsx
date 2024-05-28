@@ -2,9 +2,8 @@
 import React, { useState, ReactNode } from 'react';
 import Sidebar from '../Sidebar/Admin';
 import Header from '../Header/admin';
-import AdminAuthProvider from '@/middleware/AdminAuthProvider';
 
-export default function AdminLayout({
+export default function ManagerLayout({
     children
 }: {
     children: React.ReactNode;

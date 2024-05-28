@@ -2,7 +2,7 @@
 import React from 'react';
 import { useForm } from 'react-hook-form';
 import { useLoginMutation } from '@/redux/slice/auth/authApiSlice';
-import { useRouter } from 'next/navigation';
+import { redirect, useRouter } from 'next/navigation';
 import { checkCookie } from '@/helpers/Cookie';
 
 interface IFormInput {
@@ -31,7 +31,10 @@ function LoginForm() {
                         router.push('/admin');
                     }
                     if (role == 1) {
-                        router.push('/');
+                        router.push('/manager');
+                    }
+                    if (role == 2) {
+                        router.push('/investors');
                     }
                 }
             })
@@ -39,10 +42,9 @@ function LoginForm() {
 
         reset();
     };
-    console.log(checkCookie('access_token'));
-    if (checkCookie('access_token')) {
-        router.push('/');
-    }
+    // if (!checkCookie('access_token')) {
+    //     router.push('/');
+    // }
 
     return (
         <form onSubmit={handleSubmit(submitForm)}>

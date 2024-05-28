@@ -7,7 +7,7 @@ import { useGetUserQuery } from '../redux/slice/auth/authApiSlice';
 import { redirect } from 'next/navigation';
 import Loader from '../components/common/Loader';
 
-const AdminAuthProvider = ({ children }: any) => {
+const ManagerAuthProvider = ({ children }: any) => {
     const dispatch = useDispatch();
     // call user fetch api
     const {
@@ -21,7 +21,7 @@ const AdminAuthProvider = ({ children }: any) => {
         if (isSuccess) {
             const { role } = user.data;
             console.log(role, 'role');
-            if (role != 0) {
+            if (role != 1) {
                 redirect('/login');
             }
             dispatch(setCredentials(user.data));
@@ -39,8 +39,6 @@ const AdminAuthProvider = ({ children }: any) => {
         // if success return children
         return children;
     }
-
-    redirect('/');
 };
 
-export default AdminAuthProvider;
+export default ManagerAuthProvider;

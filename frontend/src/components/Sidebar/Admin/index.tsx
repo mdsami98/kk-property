@@ -5,7 +5,7 @@ import { usePathname } from 'next/navigation';
 import Link from 'next/link';
 import Image from 'next/image';
 import SidebarLinkGroup from './SidebarLinkGroup';
-import { HomeOutlined } from '@ant-design/icons';
+import { HomeOutlined, UserOutlined } from '@ant-design/icons';
 
 interface SidebarProps {
     sidebarOpen: boolean;
@@ -86,7 +86,6 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
             </h3> */}
 
                         <ul className='mb-6 flex flex-col gap-1.5'>
-                            {/* <!-- Menu Item Calendar --> */}
                             <li>
                                 <Link
                                     href='/admin'
@@ -99,7 +98,19 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
                                     Dashboard
                                 </Link>
                             </li>
-                            {/* <!-- Menu Item Calendar --> */}
+
+                            <li>
+                                <Link
+                                    href='/admin/investors'
+                                    className={`group relative flex items-center gap-2.5 rounded-sm px-4 py-2 font-medium text-bodydark1 duration-300 ease-in-out hover:bg-graydark dark:hover:bg-meta-4 ${
+                                        pathname.includes('calendar') &&
+                                        'bg-graydark dark:bg-meta-4'
+                                    }`}
+                                >
+                                    <UserOutlined />
+                                    Investors
+                                </Link>
+                            </li>
                         </ul>
                     </div>
                 </nav>
