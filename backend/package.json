@@ -54,6 +54,7 @@
 		"jsonwebtoken": "^8.5.1",
 		"mailgun-js": "^0.22.0",
 		"moment": "^2.29.1",
+		"mysql2": "^3.9.8",
 		"opentelemetry-instrumentation-sequelize": "^0.40.0",
 		"passport": "^0.5.0",
 		"passport-jwt": "^4.0.0",

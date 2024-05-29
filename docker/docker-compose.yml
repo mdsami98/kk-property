@@ -6,19 +6,6 @@ services:
             context: ../backend
             dockerfile: Dockerfile
         container_name: property-backend
-        environment:
-            - PORT=2000
-            - DB_HOST=db
-            - DB_NAME=property_db
-            - DB_USER=root
-            - DB_PASS=root123
-            - NODE_ENV=development
-            - JWT_SECRET=HJZwd2wiOtjsNZDhqEBf
-            - JWT_ACCESS_EXPIRATION_MINUTES=5
-            - JWT_REFRESH_EXPIRATION_DAYS=30
-            - LOG_FOLDER=logs/
-            - LOG_FILE=%DATE%-app-log.log
-            - LOG_LEVEL=error
 
         ports:
             - '2000:2000'
@@ -34,9 +21,6 @@ services:
             context: ../frontend
             dockerfile: Dockerfile
         container_name: property-frontend
-        environment:
-            - APP_ACCESS_TOKEN="token"
-            - APP_REFRESH_TOKEN="refresh"
         ports:
             - '3000:3000'
         command: sh -c "npm install &&  npm run dev"
@@ -46,27 +30,55 @@ services:
         depends_on:
             - backend
 
-    db:
-        image: postgres:14
-        container_name: property-db
-        restart: always
-        mem_limit: 1g
-        environment:
-            POSTGRES_PASSWORD: root123
-            POSTGRES_DB: db
-            POSTGRES_USER: root
-        volumes:
-            - ../backend/pgdata:/var/lib/postgresql/data
+    # db:
+    #     image: postgres:14
+    #     container_name: property-db
+    #     restart: always
+    #     mem_limit: 1g
+    #     environment:
+    #         POSTGRES_PASSWORD: root123
+    #         POSTGRES_DB: db
+    #         POSTGRES_USER: root
+    #     volumes:
+    #         - ../backend/pgdata:/var/lib/postgresql/data
 
-    db-adminer:
-        image: adminer
-        container_name: property-adminer
-        links:
-            - db:db
+    # db-adminer:
+    #     image: adminer
+    #     container_name: property-adminer
+    #     links:
+    #         - db:db
+    #     ports:
+    #         - 7000:8080
+    #     depends_on:
+    #         - db
+
+    db:
+        image: mysql:latest
+        container_name: db
+        environment:
+            MYSQL_ROOT_PASSWORD: root123
+            MYSQL_DATABASE: property_db
+            MYSQL_USER: db_user
+            MYSQL_PASSWORD: root123
         ports:
-            - 7000:8080
-        depends_on:
+            - '6033:3306'
+        volumes:
+            - dbdata:/var/lib/mysql
+    phpmyadmin:
+        image: phpmyadmin/phpmyadmin
+        container_name: pma
+        links:
             - db
+        environment:
+            PMA_HOST: db
+            PMA_PORT: 3306
+            PMA_ARBITRARY: 1
+        restart: always
+        ports:
+            - 7000:80
+
+volumes:
+    dbdata:
 
 networks:
     default:
