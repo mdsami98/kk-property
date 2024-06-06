@@ -118,6 +118,25 @@ class AuthController {
             res.status(httpStatus.BAD_GATEWAY).send(e);
         }
     };
+
+    memberRegisterByAdmin = async (req, res) => {
+        try {
+            const user = await this.userService.createMemberByAdmin(req.body);
+            let tokens = {};
+            const { status } = user.response;
+            if (user.response.status) {
+                tokens = await this.tokenService.generateAuthTokens(
+                    user.response.data
+                );
+            }
+
+            const { message, data } = user.response;
+            res.status(user.statusCode).send({ status, message, data, tokens });
+        } catch (e) {
+            logger.error(e);
+            res.status(httpStatus.BAD_GATEWAY).send(e);
+        }
+    };
 }
 
 module.exports = AuthController;

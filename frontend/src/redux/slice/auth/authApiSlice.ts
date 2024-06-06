@@ -5,6 +5,13 @@ import {
 } from '@/helpers/Cookie';
 import { apiSlice } from '../../baseQuery';
 import { setCredentials } from './authSlice';
+interface MemberFormData {
+    name: string;
+    email: string;
+    password: string;
+    confirmPassword: string;
+    memberType: number;
+}
 const authAliSlice: any = apiSlice.injectEndpoints({
     endpoints: (build) => ({
         login: build.mutation({
@@ -20,7 +27,7 @@ const authAliSlice: any = apiSlice.injectEndpoints({
                 try {
                     const { data } = await queryFulfilled;
                     console.log(data, 'data');
-                    dispatch(setCredentials({ user: data.data }));
+                    dispatch(setCredentials({ user: data.data } as any));
 
                     if (data.status) {
                         setCookie(
@@ -41,8 +48,20 @@ const authAliSlice: any = apiSlice.injectEndpoints({
         }),
         getUser: build.query({
             query: () => '/auth/user'
+        }),
+        addMemberByAdmin: build.mutation({
+            query: (payload: MemberFormData) => ({
+                url: `/auth/member-add`,
+                method: 'POST',
+                body: payload
+            }),
+            transformResponse: (response: any) => response
         })
     })
 });
 
-export const { useLoginMutation, useGetUserQuery } = authAliSlice;
+export const {
+    useLoginMutation,
+    useGetUserQuery,
+    useAddMemberByAdminMutation
+} = authAliSlice;

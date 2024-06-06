@@ -28,6 +28,12 @@ router.put(
     authController.changePassword
 );
 
+router.post(
+    '/member-add',
+    userValidator.memberAddValidation,
+    authController.memberRegisterByAdmin
+);
+
 router.get('/user', auth(), authController.getUser);
 
 module.exports = router;

@@ -31,7 +31,7 @@ class SuperDao {
         if (attributes == null) {
             return this.Model.findOne({
                 where,
-                order: [order],
+                order: [order]
             })
                 .then((result) => {
                     return result;
@@ -44,7 +44,7 @@ class SuperDao {
         return this.Model.findOne({
             where,
             attributes,
-            order: [order],
+            order: [order]
         })
             .then((result) => {
                 return result;
@@ -99,14 +99,14 @@ class SuperDao {
         attributes = undefined,
         order = ['id', 'asc'],
         limit = null,
-        offset = null,
+        offset = null
     ) {
         if (!attributes) {
             return this.Model.findAll({
                 where,
                 order: [order],
                 limit,
-                offset,
+                offset
             });
         }
 
@@ -115,7 +115,7 @@ class SuperDao {
             attributes,
             order: [order],
             limit,
-            offset,
+            offset
         });
     }
 
@@ -184,18 +184,18 @@ class SuperDao {
     }
 
     async getDataTableData(where, limit, offset, order = [['id', 'DESC']]) {
+        console.log(where, limit, offset);
         return this.Model.findAndCountAll({
             limit: parseInt(limit, 10),
             offset: parseInt(offset, 10),
             where,
-            order,
+            order
         })
             .then((result) => {
                 return result;
             })
             .catch((e) => {
-                logger.error(e);
-                console.log(e);
+                console.log(e.message, 'sadasd');
                 return [];
             });
     }
