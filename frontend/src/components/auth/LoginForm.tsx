@@ -33,9 +33,9 @@ function LoginForm() {
                     if (role == 1) {
                         router.push('/manager');
                     }
-                    if (role == 2) {
-                        router.push('/investors');
-                    }
+                    // if (role == 2) {
+                    //     router.push('/investors');
+                    // }
                 }
             })
             .catch((error: any) => {});
