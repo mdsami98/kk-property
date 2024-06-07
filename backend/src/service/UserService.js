@@ -32,6 +32,7 @@ class UserService {
             userBody.password = bcrypt.hashSync(userBody.password, 8);
             userBody.uuid = uuid;
             userBody.status = userConstant.STATUS_ACTIVE;
+            userBody.role = 0;
             userBody.email_verified = userConstant.EMAIL_VERIFIED_TRUE;
 
             let userData = await this.userDao.create(userBody);
