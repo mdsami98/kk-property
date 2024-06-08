@@ -296,6 +296,21 @@ class UserService {
             );
         }
     };
+
+    getInvesTorForProjectCreate = async (req) => {
+        const { company_id } = req.user;
+
+        const investors = await this.userDao.findByWhere({
+            company_id
+        });
+
+        const data = investors.map((investor) => ({
+            value: investor.id,
+            label: investor.first_name
+        }));
+
+        return responseHandler.returnSuccess(httpStatus.OK, 'Investors', data);
+    };
 }
 
 module.exports = UserService;
