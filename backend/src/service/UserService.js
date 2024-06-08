@@ -211,6 +211,8 @@ class UserService {
             userBody.role = userBody.memberType;
             userBody.email_verified = userConstant.EMAIL_VERIFIED_TRUE;
             userBody.company_id = company_id;
+            userBody.first_name = userBody.name ? userBody.name : null;
+            userBody.last_name = userBody.lastName ? userBody.lastName : null;
 
             let userData = await this.userDao.create(userBody);
 
@@ -295,6 +297,21 @@ class UserService {
                 'Something went wrong!'
             );
         }
+    };
+
+    getInvesTorForProjectCreate = async (req) => {
+        const { company_id } = req.user;
+
+        const investors = await this.userDao.findByWhere({
+            company_id
+        });
+
+        const data = investors.map((investor) => ({
+            value: investor.id,
+            label: investor.first_name
+        }));
+
+        return responseHandler.returnSuccess(httpStatus.OK, 'Investors', data);
     };
 }
 
