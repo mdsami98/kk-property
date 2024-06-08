@@ -11,7 +11,10 @@ const MemberAddForm: React.FC<MemberAddFormProps> = ({
     const [addMember] = useAddMemberByAdminMutation();
 
     const [formData, setFormData] = useState({
-        name: '',
+
+        firstName: '',
+        lastName: '',
+        numberField: '',
         email: '',
         password: '',
         confirmPassword: '',
@@ -36,7 +39,9 @@ const MemberAddForm: React.FC<MemberAddFormProps> = ({
     const handleSubmit = async (e: any) => {
         e.preventDefault();
         if (
-            !formData.name ||
+            !formData.firstName ||
+            !formData.lastName ||
+            !formData.numberField ||
             !formData.email ||
             !formData.password ||
             !formData.confirmPassword
@@ -64,7 +69,9 @@ const MemberAddForm: React.FC<MemberAddFormProps> = ({
                         message.success(response.message);
                         setFormData((prev) => ({
                             ...prev,
-                            name: '',
+                            firstName: '',
+                            lastName: '',
+                            numberField: '',
                             email: '',
                             password: '',
                             confirmPassword: '',
@@ -101,12 +108,12 @@ const MemberAddForm: React.FC<MemberAddFormProps> = ({
                 onSubmit={handleSubmit}
                 className='grid gap-4 sm:grid-cols-2 sm:gap-6'
             >
-                <div className='sm:col-span-2'>
+                {/* <div className='sm:col-span-2'>
                     <label
                         htmlFor='name'
                         className='block mb-2 text-sm font-medium text-gray-900 dark:text-white'
                     >
-                        Name
+                        Namerrrrr
                     </label>
                     <Input
                         name='name'
@@ -114,7 +121,55 @@ const MemberAddForm: React.FC<MemberAddFormProps> = ({
                         value={formData.name}
                         onChange={handleChange}
                     />
-                </div>
+                </div> */}
+<div className='sm:col-span-2 flex space-x-4 p-2'>
+    <div className='w-1/2'>
+        <label
+            htmlFor='firstName'
+            className='block mb-2 text-sm font-medium text-gray-900 dark:text-white'
+        >
+            First Name
+        </label>
+        <Input
+            name='firstName'
+            placeholder='Enter First Name'
+            value={formData.firstName}
+            onChange={handleChange}
+            required
+        />
+    </div>
+    <div className='w-1/2'>
+        <label
+            htmlFor='lastName'
+            className='block mb-2 text-sm font-medium text-gray-900 dark:text-white'
+        >
+            Last Name
+        </label>
+        <Input
+            name='lastName'
+            placeholder='Enter Last Name'
+            value={formData.lastName}
+            onChange={handleChange}
+        />
+    </div>
+</div>
+<div className='sm:col-span-2'>
+    <label
+        htmlFor='numberField'
+        className='block mb-2 text-sm font-medium text-gray-900 dark:text-white'
+    >
+        Number
+    </label>
+    <Input
+        type='number'
+        name='numberField'
+        placeholder='Enter Number'
+        value={formData.numberField}
+        onChange={handleChange}
+    />
+</div>
+
+
                 <div className='sm:col-span-2'>
                     <label
                         htmlFor='email'

@@ -47,12 +47,21 @@ const DataTable: React.FC<DataTableProps> = ({
     };
     return (
         <>
-            <Input
+            <div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: '16px' }}>
+                <Input
+                    name='name'
+                    placeholder='Enter Name'
+                    value={search}
+                    onChange={handleSearchChange}
+                    style={{ width: '200px' }}
+                />
+            </div>
+            {/* <Input
                 name='name'
                 placeholder='Enter Name'
                 value={search}
                 onChange={handleSearchChange}
-            />
+            /> */}
             <Table
                 columns={columns}
                 dataSource={data}
