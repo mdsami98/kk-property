@@ -121,7 +121,7 @@ class AuthController {
 
     memberRegisterByAdmin = async (req, res) => {
         try {
-            const user = await this.userService.createMemberByAdmin(req.body);
+            const user = await this.userService.createMemberByAdmin(req);
             let tokens = {};
             const { status } = user.response;
             if (user.response.status) {
