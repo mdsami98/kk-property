@@ -47,7 +47,8 @@ const authAliSlice: any = apiSlice.injectEndpoints({
             }
         }),
         getUser: build.query({
-            query: () => '/auth/user'
+            query: () => '/auth/user',
+            providesTags: ['member']
         }),
         addMemberByAdmin: build.mutation({
             query: (payload: MemberFormData) => ({
@@ -55,6 +56,7 @@ const authAliSlice: any = apiSlice.injectEndpoints({
                 method: 'POST',
                 body: payload
             }),
+            invalidatesTags: ['member'],
             transformResponse: (response: any) => response
         })
     })
