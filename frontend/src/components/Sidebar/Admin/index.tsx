@@ -5,7 +5,8 @@ import { usePathname } from 'next/navigation';
 import Link from 'next/link';
 import Image from 'next/image';
 import SidebarLinkGroup from './SidebarLinkGroup';
-import { HomeOutlined, UserOutlined } from '@ant-design/icons';
+import { FundProjectionScreenOutlined, HomeOutlined, UserOutlined } from '@ant-design/icons';
+import logo from '../../../../public/images/user/kk.png';
 
 interface SidebarProps {
     sidebarOpen: boolean;
@@ -71,10 +72,13 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
             }`}
         >
             {/* <!-- SIDEBAR HEADER --> */}
-            <div className='flex items-center justify-between gap-2 px-6 py-5.5 lg:py-6.5 text-white'>
-                <Link href='/'>Logo</Link>
-            </div>
-            {/* <!-- SIDEBAR HEADER --> */}
+                <div className='flex items-center justify-between gap-2 px-6 py-5.5 lg:py-6.5 text-white'>
+                    <Link href='/'>
+                        <h1 style={{ fontWeight: 'bold', color: 'white',fontSize: '25px' }}>KK-Properties Ltd</h1>
+                    </Link>
+                </div>
+{/* <!-- SIDEBAR HEADER --> */}
+
 
             <div className='no-scrollbar flex flex-col overflow-y-auto duration-300 ease-linear'>
                 {/* <!-- Sidebar Menu --> */}
@@ -120,7 +124,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
                                         'bg-graydark dark:bg-meta-4'
                                     }`}
                                 >
-                                    <UserOutlined />
+                                    <FundProjectionScreenOutlined />
                                     Projects
                                 </Link>
                             </li>
