@@ -22,6 +22,11 @@ export const setCookie = (cname: any, cvalue: any, exTime: any) => {
     // document.cookie = cname + "=" + cvalue + "; Secure; path=/";
 };
 
+export const deleteCookie = (name: string) => {
+    // Set the cookie with the specified name to an empty value and an expired date
+    document.cookie = name + '=; expires=Thu, 01 Jan 1970 00:00:01 GMT; path=/';
+};
+
 export const setOtherCookie = (cname: any, cvalue: any) => {
     document.cookie = `${cname}=${cvalue}`;
 };

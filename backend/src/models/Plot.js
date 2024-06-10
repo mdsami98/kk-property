@@ -32,6 +32,10 @@ module.exports = (sequelize, DataTypes) => {
                 type: DataTypes.INTEGER,
                 allowNull: false
             },
+            plot_id: {
+                type: DataTypes.STRING,
+                allowNull: false
+            },
             plot_code: {
                 type: DataTypes.STRING,
                 allowNull: false
@@ -53,11 +57,11 @@ module.exports = (sequelize, DataTypes) => {
             },
             created_at: {
                 type: DataTypes.DATE,
-                allowNull: false
+                allowNull: true
             },
             updated_at: {
                 type: DataTypes.DATE,
-                allowNull: false
+                allowNull: true
             }
         },
         {
