@@ -58,7 +58,7 @@ const DataTable: React.FC<DataTableProps> = ({
             >
                 <Input
                     name='name'
-                    placeholder='Enter Name'
+                    placeholder='Search'
                     value={search}
                     onChange={handleSearchChange}
                     style={{ width: '200px' }}

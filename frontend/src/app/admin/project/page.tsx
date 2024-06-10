@@ -21,7 +21,7 @@ export default function AdminDashboard() {
                     Add New Project
                 </Button>
 
-                <div>
+                <div className='mt-5'>
                     <ProjectList />
                 </div>
             </div>
