@@ -93,7 +93,7 @@ const DropdownMessage = () => {
         <div className="px-4.5 py-3">
           <h5 className="text-sm font-medium text-bodydark2">Messages</h5>
         </div>
-
+{/* 
         <ul className="flex h-auto flex-col overflow-y-auto">
           <li>
             <Link
@@ -230,7 +230,7 @@ const DropdownMessage = () => {
               </div>
             </Link>
           </li>
-        </ul>
+        </ul> */}
       </div>
       {/* <!-- Dropdown End --> */}
     </li>
