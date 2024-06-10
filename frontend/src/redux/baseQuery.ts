@@ -8,7 +8,8 @@ import {
 import { getCookie, setCookie, setCookieForRefresh } from '@/helpers/Cookie';
 
 const baseQuery = fetchBaseQuery({
-    baseUrl: 'https://api.kamalkalamproperties.com/api/',
+    // baseUrl: 'https://api.kamalkalamproperties.com/api/',
+    baseUrl: 'http://localhost:2000/api',
     prepareHeaders: (headers, { getState, endpoint }) => {
         const token = getCookie('access_token');
         console.log(token);

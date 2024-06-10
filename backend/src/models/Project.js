@@ -22,6 +22,10 @@ module.exports = (sequelize, DataTypes) => {
                 autoIncrement: true,
                 primaryKey: true
             },
+            company_id: {
+                type: DataTypes.INTEGER,
+                allowNull: false
+            },
             user_uuid: {
                 type: DataTypes.UUID,
                 allowNull: false
@@ -47,11 +51,11 @@ module.exports = (sequelize, DataTypes) => {
             },
             created_at: {
                 type: DataTypes.DATE,
-                allowNull: false
+                allowNull: true
             },
             updated_at: {
                 type: DataTypes.DATE,
-                allowNull: false
+                allowNull: true
             }
         },
         {

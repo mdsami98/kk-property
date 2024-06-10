@@ -15,6 +15,10 @@ module.exports = {
                 allowNull: false,
                 type: Sequelize.INTEGER
             },
+            plot_id: {
+                allowNull: false,
+                type: Sequelize.STRING
+            },
             plot_code: {
                 allowNull: false,
                 type: Sequelize.STRING

@@ -8,6 +8,7 @@ interface DataTableProps {
     data: any[];
     loading: boolean;
     total: number;
+    rowKey: string;
     onPageChange: (page: number, pageSize: number) => void;
     handleSearch: (value: string) => void;
 }
@@ -18,7 +19,8 @@ const DataTable: React.FC<DataTableProps> = ({
     loading,
     total,
     onPageChange,
-    handleSearch
+    handleSearch,
+    rowKey
 }) => {
     const [search, setSearch] = useState('');
     const debounceTimeoutRef = useRef<number | null>(null);
@@ -47,7 +49,13 @@ const DataTable: React.FC<DataTableProps> = ({
     };
     return (
         <>
-            <div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: '16px' }}>
+            <div
+                style={{
+                    display: 'flex',
+                    justifyContent: 'flex-end',
+                    marginBottom: '16px'
+                }}
+            >
                 <Input
                     name='name'
                     placeholder='Enter Name'
@@ -67,6 +75,7 @@ const DataTable: React.FC<DataTableProps> = ({
                 dataSource={data}
                 loading={loading}
                 pagination={false}
+                rowKey={rowKey}
             />
             <div className='pt-5 text-right'>
                 <Pagination

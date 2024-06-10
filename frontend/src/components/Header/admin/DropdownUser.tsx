@@ -6,7 +6,7 @@ import React from 'react';
 import { logOutSlice, selectCurrentUser } from '@/redux/slice/auth/authSlice';
 import { useDispatch, useSelector } from 'react-redux';
 import { redirect, useRouter } from 'next/navigation';
-import { setCookie, setCookieForRefresh } from '@/helpers/Cookie';
+import { deleteCookie } from '@/helpers/Cookie';
 
 const DropdownUser = () => {
     const router = useRouter();
@@ -47,8 +47,8 @@ const DropdownUser = () => {
 
     const logOutOnClick = () => {
         dispatch(logOutSlice());
-        setCookie('access_token', '', '1 hour');
-        setCookieForRefresh('refresh_token', '');
+        deleteCookie('access_token');
+        deleteCookie('refresh_token');
         router.push('/login');
     };
 
@@ -132,7 +132,6 @@ const DropdownUser = () => {
                             My Profile
                         </Link>
                     </li>
-                   
                 </ul>
                 <button
                     onClick={logOutOnClick}

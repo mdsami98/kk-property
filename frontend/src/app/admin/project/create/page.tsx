@@ -1,10 +1,13 @@
 'use client';
 import React, { useReducer } from 'react';
-import { Input, Button, Spin, Select } from 'antd';
+import { Input, Button, Spin, Select, message } from 'antd';
 import { generateUniqueString } from '@/util/helper';
 import { useRouter } from 'next/navigation';
 import { LeftOutlined, PlusOutlined } from '@ant-design/icons';
-import { useGetAllInvestorsForProjectCreateQuery } from '@/redux/slice/project/projectApiSlice';
+import {
+    useGetAllInvestorsForProjectCreateQuery,
+    useProjectCreateMutation
+} from '@/redux/slice/project/projectApiSlice';
 
 // Initial state
 const initialState = {
@@ -47,13 +50,12 @@ function reducer(state, action) {
                 plots: [
                     ...state.plots,
                     {
-                        id: generateUniqueString(),
+                        plotId: generateUniqueString(),
                         plotNumber: '',
-                        investor: '',
-                        investAmount: '',
-                        dueAmount: '',
-                        sellPrice: '',
-                        other: '',
+                        investor: null,
+                        investAmount: 0,
+                        dueAmount: 0,
+                        sellPrice: 0,
                         errors: {}
                     }
                 ]
@@ -61,13 +63,15 @@ function reducer(state, action) {
         case 'REMOVE_PLOT':
             return {
                 ...state,
-                plots: state.plots.filter((plot) => plot.id !== action.id)
+                plots: state.plots.filter(
+                    (plot) => plot.plotId !== action.plotId
+                )
             };
         case 'SET_PLOT_FIELD':
             return {
                 ...state,
                 plots: state.plots.map((plot) =>
-                    plot.id === action.id
+                    plot.plotId === action.plotId
                         ? {
                               ...plot,
                               [action.field]: action.value,
@@ -82,10 +86,22 @@ function reducer(state, action) {
             return {
                 ...state,
                 plots: state.plots.map((plot) =>
-                    plot.id === action.id
+                    plot.plotId === action.plotId
                         ? { ...plot, errors: action.errors }
                         : plot
                 )
+            };
+        case 'RESET_STATE':
+            return {
+                ...state,
+                projectName: '',
+                address: '',
+                area: 0,
+                unitPrice: 0,
+                totalPrice: 0,
+                sellingPrice: 0,
+                plots: [],
+                errors: {}
             };
         default:
             throw new Error();
@@ -96,6 +112,8 @@ const ProjectForm = () => {
     const router = useRouter();
     const { data: investors, isLoading } =
         useGetAllInvestorsForProjectCreateQuery();
+
+    const [projectCreate] = useProjectCreateMutation();
 
     console.log(investors);
     const handleBackButtonClick = () => {
@@ -111,19 +129,19 @@ const ProjectForm = () => {
         });
     };
 
-    const handlePlotChange = (id, e) => {
+    const handlePlotChange = (plotId, e) => {
         dispatch({
             type: 'SET_PLOT_FIELD',
-            id,
+            plotId,
             field: e.target.name,
             value: e.target.value
         });
     };
 
-    const handlePlotInvestorChange = (id, field, value) => {
+    const handlePlotInvestorChange = (plotId, field, value) => {
         dispatch({
             type: 'SET_PLOT_FIELD',
-            id,
+            plotId,
             field,
             value
         });
@@ -135,8 +153,7 @@ const ProjectForm = () => {
         if (!state.address) errors.address = 'Address is required';
         if (!state.area) errors.area = 'Area is required';
         if (!state.unitPrice) errors.unitPrice = 'Unit Price is required';
-        if (!state.sellingPrice)
-            errors.sellingPrice = 'Selling Price is required';
+
         return errors;
     };
 
@@ -147,7 +164,6 @@ const ProjectForm = () => {
         if (!plot.investAmount)
             errors.investAmount = 'Invest Amount is required';
         if (!plot.dueAmount) errors.dueAmount = 'Due Amount is required';
-        if (!plot.sellPrice) errors.sellPrice = 'Sell Price is required';
         // if (!plot.other) errors.other = 'Other is required';
         return errors;
     };
@@ -156,8 +172,8 @@ const ProjectForm = () => {
         dispatch({ type: 'ADD_PLOT' });
     };
 
-    const removePlot = (id) => {
-        dispatch({ type: 'REMOVE_PLOT', id });
+    const removePlot = (plotId) => {
+        dispatch({ type: 'REMOVE_PLOT', plotId });
     };
 
     const handleSubmit = () => {
@@ -168,7 +184,7 @@ const ProjectForm = () => {
         }
 
         const plotErrors = state.plots.map((plot) => ({
-            id: plot.id,
+            plotId: plot.plotId,
             errors: validatePlotFields(plot)
         }));
 
@@ -180,7 +196,7 @@ const ProjectForm = () => {
             plotErrors.forEach((plotError) => {
                 dispatch({
                     type: 'SET_PLOT_ERRORS',
-                    id: plotError.id,
+                    plotId: plotError.plotId,
                     errors: plotError.errors
                 });
             });
@@ -188,7 +204,19 @@ const ProjectForm = () => {
         }
 
         // Handle form submission
-        console.log(state, 'ff');
+        projectCreate(state)
+            .unwrap()
+            .then((response: any) => {
+                if (response.status) {
+                    console.log(response);
+                    message.success(response.message);
+                    dispatch({ type: 'RESET_STATE' });
+                    router.push('/admin/project');
+                }
+            })
+            .catch((error: any) => {
+                message.error('Sorry Something Wrong Please Try Again');
+            });
         // message.success('Form submitted successfully!');
     };
 
@@ -334,11 +362,11 @@ const ProjectForm = () => {
                 </Button>
             </div>
             {state.plots.map((plot) => (
-                <div key={plot.id} className='mt-4 border p-4 rounded'>
+                <div key={plot.plotId} className='mt-4 border p-4 rounded'>
                     <div className='grid grid-cols-3 gap-4'>
                         <div>
                             <label
-                                htmlFor={`plotNumber-${plot.id}`}
+                                htmlFor={`plotNumber-${plot.plotId}`}
                                 className='block mb-2 text-sm font-medium text-gray-900 dark:text-white'
                             >
                                 Plot Number
@@ -347,7 +375,9 @@ const ProjectForm = () => {
                                 name='plotNumber'
                                 placeholder='Enter Plot Number'
                                 value={plot.plotNumber}
-                                onChange={(e) => handlePlotChange(plot.id, e)}
+                                onChange={(e) =>
+                                    handlePlotChange(plot.plotId, e)
+                                }
                             />
                             {plot.errors.plotNumber && (
                                 <p className='text-red mt-1 ml-2 text-sm'>
@@ -357,7 +387,7 @@ const ProjectForm = () => {
                         </div>
                         <div>
                             <label
-                                htmlFor={`investor-${plot.id}`}
+                                htmlFor={`investor-${plot.plotId}`}
                                 className='block mb-2 text-sm font-medium text-gray-900 dark:text-white'
                             >
                                 Select Investor
@@ -368,7 +398,7 @@ const ProjectForm = () => {
                                 value={plot.investor}
                                 onChange={(value) =>
                                     handlePlotInvestorChange(
-                                        plot.id,
+                                        plot.plotId,
                                         'investor',
                                         value
                                     )
@@ -387,16 +417,19 @@ const ProjectForm = () => {
                         </div>
                         <div>
                             <label
-                                htmlFor={`investAmount-${plot.id}`}
+                                htmlFor={`investAmount-${plot.plotId}`}
                                 className='block mb-2 text-sm font-medium text-gray-900 dark:text-white'
                             >
                                 Invest Amount
                             </label>
                             <Input
+                                type='number'
                                 name='investAmount'
                                 placeholder='Enter Invest Amount'
                                 value={plot.investAmount}
-                                onChange={(e) => handlePlotChange(plot.id, e)}
+                                onChange={(e) =>
+                                    handlePlotChange(plot.plotId, e)
+                                }
                             />
                             {plot.errors.investAmount && (
                                 <p className='text-red mt-1 ml-2 text-sm'>
@@ -406,16 +439,19 @@ const ProjectForm = () => {
                         </div>
                         <div>
                             <label
-                                htmlFor={`dueAmount-${plot.id}`}
+                                htmlFor={`dueAmount-${plot.plotId}`}
                                 className='block mb-2 text-sm font-medium text-gray-900 dark:text-white'
                             >
                                 Due Amount
                             </label>
                             <Input
+                                type='number'
                                 name='dueAmount'
                                 placeholder='Enter Due Amount'
                                 value={plot.dueAmount}
-                                onChange={(e) => handlePlotChange(plot.id, e)}
+                                onChange={(e) =>
+                                    handlePlotChange(plot.plotId, e)
+                                }
                             />
                             {plot.errors.dueAmount && (
                                 <p className='text-red mt-1 ml-2 text-sm'>
@@ -425,16 +461,19 @@ const ProjectForm = () => {
                         </div>
                         <div>
                             <label
-                                htmlFor={`sellPrice-${plot.id}`}
+                                htmlFor={`sellPrice-${plot.plotId}`}
                                 className='block mb-2 text-sm font-medium text-gray-900 dark:text-white'
                             >
                                 Sell Price
                             </label>
                             <Input
+                                type='number'
                                 name='sellPrice'
                                 placeholder='Enter Sell Price'
                                 value={plot.sellPrice}
-                                onChange={(e) => handlePlotChange(plot.id, e)}
+                                onChange={(e) =>
+                                    handlePlotChange(plot.plotId, e)
+                                }
                             />
                             {plot.errors.sellPrice && (
                                 <p className='text-red mt-1 ml-2 text-sm'>
@@ -444,7 +483,7 @@ const ProjectForm = () => {
                         </div>
                         {/* <div>
                             <label
-                                htmlFor={`other-${plot.id}`}
+                                htmlFor={`other-${plot.plotId}`}
                                 className='block mb-2 text-sm font-medium text-gray-900 dark:text-white'
                             >
                                 Other
@@ -453,7 +492,7 @@ const ProjectForm = () => {
                                 name='other'
                                 placeholder='Enter Other'
                                 value={plot.other}
-                                onChange={(e) => handlePlotChange(plot.id, e)}
+                                onChange={(e) => handlePlotChange(plot.plotId, e)}
                             />
                             {plot.errors.other && (
                                 <p className='text-red mt-1 ml-2 text-sm'>
@@ -463,7 +502,7 @@ const ProjectForm = () => {
                         </div> */}
                     </div>
                     <Button
-                        onClick={() => removePlot(plot.id)}
+                        onClick={() => removePlot(plot.plotId)}
                         className='bg-red-500 text-white py-2 px-4 mt-4 rounded'
                     >
                         Delete
