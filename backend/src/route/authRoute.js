@@ -30,6 +30,7 @@ router.put(
 
 router.post(
     '/member-add',
+    auth(),
     userValidator.memberAddValidation,
     authController.memberRegisterByAdmin
 );

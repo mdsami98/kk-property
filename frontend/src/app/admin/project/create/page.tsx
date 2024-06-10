@@ -1,9 +1,10 @@
 'use client';
 import React, { useReducer } from 'react';
-import { Input, Button } from 'antd';
+import { Input, Button, Spin, Select } from 'antd';
 import { generateUniqueString } from '@/util/helper';
 import { useRouter } from 'next/navigation';
 import { LeftOutlined, PlusOutlined } from '@ant-design/icons';
+import { useGetAllInvestorsForProjectCreateQuery } from '@/redux/slice/project/projectApiSlice';
 
 // Initial state
 const initialState = {
@@ -93,6 +94,10 @@ function reducer(state, action) {
 
 const ProjectForm = () => {
     const router = useRouter();
+    const { data: investors, isLoading } =
+        useGetAllInvestorsForProjectCreateQuery();
+
+    console.log(investors);
     const handleBackButtonClick = () => {
         router.push('/admin/project');
     };
@@ -115,6 +120,15 @@ const ProjectForm = () => {
         });
     };
 
+    const handlePlotInvestorChange = (id, field, value) => {
+        dispatch({
+            type: 'SET_PLOT_FIELD',
+            id,
+            field,
+            value
+        });
+    };
+
     const validateFields = () => {
         const errors = {};
         if (!state.projectName) errors.projectName = 'Project Name is required';
@@ -134,7 +148,7 @@ const ProjectForm = () => {
             errors.investAmount = 'Invest Amount is required';
         if (!plot.dueAmount) errors.dueAmount = 'Due Amount is required';
         if (!plot.sellPrice) errors.sellPrice = 'Sell Price is required';
-        if (!plot.other) errors.other = 'Other is required';
+        // if (!plot.other) errors.other = 'Other is required';
         return errors;
     };
 
@@ -174,9 +188,17 @@ const ProjectForm = () => {
         }
 
         // Handle form submission
-        console.log(state);
+        console.log(state, 'ff');
         // message.success('Form submitted successfully!');
     };
+
+    if (isLoading) {
+        return (
+            <div className='flex justify-center items-center h-screen'>
+                <Spin size='large' />
+            </div>
+        );
+    }
 
     return (
         <div className='p-4'>
@@ -340,12 +362,23 @@ const ProjectForm = () => {
                             >
                                 Select Investor
                             </label>
-                            <Input
-                                name='investor'
-                                placeholder='Enter Investor'
+
+                            <Select
+                                style={{ width: '100%' }}
                                 value={plot.investor}
-                                onChange={(e) => handlePlotChange(plot.id, e)}
-                            />
+                                onChange={(value) =>
+                                    handlePlotInvestorChange(
+                                        plot.id,
+                                        'investor',
+                                        value
+                                    )
+                                }
+                                options={investors.map((investor) => ({
+                                    value: investor.value,
+                                    label: investor.label
+                                }))}
+                            ></Select>
+
                             {plot.errors.investor && (
                                 <p className='text-red mt-1 ml-2 text-sm'>
                                     {plot.errors.investor}
@@ -409,7 +442,7 @@ const ProjectForm = () => {
                                 </p>
                             )}
                         </div>
-                        <div>
+                        {/* <div>
                             <label
                                 htmlFor={`other-${plot.id}`}
                                 className='block mb-2 text-sm font-medium text-gray-900 dark:text-white'
@@ -427,7 +460,7 @@ const ProjectForm = () => {
                                     {plot.errors.other}
                                 </p>
                             )}
-                        </div>
+                        </div> */}
                     </div>
                     <Button
                         onClick={() => removePlot(plot.id)}

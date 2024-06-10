@@ -26,6 +26,10 @@ module.exports = {
                 type: Sequelize.SMALLINT,
                 defaultValue: 1 // 1 = contributor
             },
+            company_id: {
+                type: Sequelize.INTEGER,
+                allowNull: false
+            },
             password: {
                 type: Sequelize.STRING,
                 allowNull: true

@@ -6,11 +6,30 @@ const responseHandler = require('../helper/responseHandler');
 const logger = require('../config/logger');
 const { userConstant } = require('../config/constant');
 const { Op } = require('sequelize');
+const CompanyDao = require('../dao/CompanyDao');
 
 class UserService {
     constructor() {
         this.userDao = new UserDao();
+        this.companyDao = new CompanyDao();
     }
+
+    createNewCompany = async () => {
+        try {
+            const companies = await this.companyDao.findAll();
+            const data = {
+                company_name: companies
+                    ? `Company ${companies.length + 1}`
+                    : 'Company 1'
+            };
+            const company = await this.companyDao.create(data);
+            console.log(company);
+            return company;
+        } catch (e) {
+            console.log(e);
+            return false;
+        }
+    };
 
     /**
      * Create a user
@@ -27,6 +46,14 @@ class UserService {
                     'Email already taken'
                 );
             }
+            const company = await this.createNewCompany();
+            if (!company) {
+                return responseHandler.returnError(
+                    httpStatus.BAD_REQUEST,
+                    'Sorry something Wrong Please try again'
+                );
+            }
+
             const uuid = uuidv4();
             userBody.email = userBody.email.toLowerCase();
             userBody.password = bcrypt.hashSync(userBody.password, 8);
@@ -34,6 +61,12 @@ class UserService {
             userBody.status = userConstant.STATUS_ACTIVE;
             userBody.role = 0;
             userBody.email_verified = userConstant.EMAIL_VERIFIED_TRUE;
+            userBody = {
+                ...userBody,
+                company_id: company.id
+            };
+
+            console.log(userBody);
 
             let userData = await this.userDao.create(userBody);
 
@@ -54,7 +87,7 @@ class UserService {
                 userData
             );
         } catch (e) {
-            logger.error(e);
+            console.log(e.message);
             return responseHandler.returnError(
                 httpStatus.BAD_REQUEST,
                 'Something went wrong!'
@@ -157,8 +190,12 @@ class UserService {
         );
     };
 
-    createMemberByAdmin = async (userBody) => {
+    createMemberByAdmin = async (req) => {
         try {
+            console.log(req);
+
+            const { body: userBody } = req;
+            const { company_id } = req.user;
             let message = 'Successfully Add Member.';
             if (await this.userDao.isEmailExists(userBody.email)) {
                 return responseHandler.returnError(
@@ -173,6 +210,9 @@ class UserService {
             userBody.status = userConstant.STATUS_ACTIVE;
             userBody.role = userBody.memberType;
             userBody.email_verified = userConstant.EMAIL_VERIFIED_TRUE;
+            userBody.company_id = company_id;
+            userBody.first_name = userBody.name ? userBody.name : null;
+            userBody.last_name = userBody.lastName ? userBody.lastName : null;
 
             let userData = await this.userDao.create(userBody);
 
@@ -257,6 +297,21 @@ class UserService {
                 'Something went wrong!'
             );
         }
+    };
+
+    getInvesTorForProjectCreate = async (req) => {
+        const { company_id } = req.user;
+
+        const investors = await this.userDao.findByWhere({
+            company_id
+        });
+
+        const data = investors.map((investor) => ({
+            value: investor.id,
+            label: investor.first_name
+        }));
+
+        return responseHandler.returnSuccess(httpStatus.OK, 'Investors', data);
     };
 }
 
