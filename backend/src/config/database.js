@@ -16,18 +16,18 @@ module.exports = {
         password: config.dbPass,
         database: config.dbName,
         host: config.dbHost,
-        dialect: 'postgres',
+        dialect: 'mysql',
         dialectOptions: {
             bigNumberStrings: true
         }
     },
     production: {
         username: config.dbUser,
-        password: config.dbPass,
+        password: 'Kx^b}6{X#vnE',
         database: config.dbName,
         host: config.dbHost,
         port: config.port,
-        dialect: 'postgres',
+        dialect: 'mysql',
         dialectOptions: {
             bigNumberStrings: true
         }
