@@ -3,7 +3,7 @@ import { Input, Select, Button, message, Spin } from 'antd';
 import {
     useCreateInventoryMutation,
     useGetAllTagsQuery
-} from '@/redux/slice/inventory/inventorySlice';
+} from '@/redux/slice/inventory/inventoryApiSlice';
 
 interface MemberAddFormProps {
     createSuccess: Function;

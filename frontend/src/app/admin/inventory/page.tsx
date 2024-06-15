@@ -3,9 +3,9 @@ import { PlusOutlined } from '@ant-design/icons';
 import React, { useState } from 'react';
 import { Button } from 'antd';
 import { useRouter } from 'next/navigation';
-import ProjectList from '@/components/Project/ProjectList';
 import InventoryCreate from '@/components/adminMember/adminInventory/InventoryCreate';
 import CustomModal from '@/components/Modal';
+import InventoryDataTable from '@/components/admin/inventory/table';
 
 export default function AdminDashboard() {
     const router = useRouter();
@@ -32,7 +32,7 @@ export default function AdminDashboard() {
                     Add New Product
                 </Button>
                 <div className='mt-5'>
-                    <ProjectList />
+                    <InventoryDataTable />
                 </div>
             </div>
 

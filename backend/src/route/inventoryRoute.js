@@ -16,5 +16,6 @@ router.post(
     inventoryValidator.inventoryCreateValidation,
     inventoryController.createInventory
 );
+router.get('/', auth(), inventoryController.getInventoryDataTable);
 
 module.exports = router;

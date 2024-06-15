@@ -27,6 +27,17 @@ class InventoryController {
             res.status(httpStatus.BAD_GATEWAY).send(e);
         }
     };
+    getInventoryDataTable = async (req, res) => {
+        try {
+            const response = await this.inventoryService.getInventoryDataTable(
+                req
+            );
+            res.status(response.statusCode).send(response.response);
+        } catch (e) {
+            logger.error(e);
+            res.status(httpStatus.BAD_GATEWAY).send(e);
+        }
+    };
 }
 
 module.exports = InventoryController;

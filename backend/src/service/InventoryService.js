@@ -90,6 +90,54 @@ class InventoryService {
             );
         }
     };
+
+    getInventoryDataTable = async (req) => {
+        try {
+            let where = {};
+            const page = req.query.page !== undefined ? +req.query.page : 1;
+            const limit = req.query.limit !== undefined ? +req.query.limit : 10;
+
+            if (
+                req.query.search_key !== '' &&
+                typeof req.query.search_key !== 'undefined'
+            ) {
+                where = {
+                    ...where,
+                    [Op.or]: [
+                        {
+                            product_name: {
+                                [Op.iLike]: `%${req.query.search_key}%`
+                            }
+                        },
+                        {
+                            product_code: {
+                                [Op.iLike]: `%${req.query.search_key}%`
+                            }
+                        }
+                    ]
+                };
+            }
+
+            const offset = (page - 1) * limit;
+            const users = await this.inventoryDao.getDataTableData(
+                where,
+                limit,
+                offset
+            );
+
+            return responseHandler.returnSuccess(
+                httpStatus.OK,
+                'Project Data Table',
+                users
+            );
+        } catch (e) {
+            console.log(e);
+            return responseHandler.returnError(
+                httpStatus.BAD_REQUEST,
+                'Something went wrong!'
+            );
+        }
+    };
 }
 
 module.exports = InventoryService;
