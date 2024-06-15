@@ -1,6 +1,6 @@
 module.exports = {
     up: async (queryInterface, Sequelize) => {
-        await queryInterface.createTable('projects', {
+        await queryInterface.createTable('inventories', {
             id: {
                 allowNull: false,
                 autoIncrement: true,
@@ -8,32 +8,35 @@ module.exports = {
                 type: Sequelize.INTEGER
             },
             company_id: {
-                allowNull: false,
-                type: Sequelize.INTEGER
+                type: Sequelize.INTEGER,
+                allowNull: false
             },
-            user_uuid: {
-                allowNull: false,
-                type: Sequelize.UUID
+            product_name: {
+                type: Sequelize.STRING,
+                allowNull: false
             },
-            name: {
-                type: Sequelize.STRING
+            product_code: {
+                type: Sequelize.STRING,
+                allowNull: false
             },
-            address: {
+
+            quantity: {
+                type: Sequelize.FLOAT,
+                allowNull: false
+            },
+            unit_price: {
+                type: Sequelize.FLOAT,
+                allowNull: false
+            },
+            description: {
                 type: Sequelize.STRING,
                 allowNull: true
             },
-            area: {
-                type: Sequelize.FLOAT
+            tag_ids: {
+                type: Sequelize.JSON,
+                allowNull: true
             },
-            unit_price: {
-                type: Sequelize.FLOAT
-            },
-            total_price: {
-                type: Sequelize.FLOAT
-            },
-            selling_price: {
-                type: Sequelize.FLOAT
-            },
+
             created_at: {
                 allowNull: true,
                 type: Sequelize.DATE
@@ -46,6 +49,6 @@ module.exports = {
     },
 
     down: async (queryInterface, Sequelize) => {
-        await queryInterface.dropTable('projects');
+        await queryInterface.dropTable('inventories');
     }
 };

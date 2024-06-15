@@ -1,19 +1,25 @@
 module.exports = {
     up: async (queryInterface, Sequelize) => {
-        await queryInterface.createTable('companies', {
+        await queryInterface.createTable('inventory_tags', {
             id: {
                 allowNull: false,
                 autoIncrement: true,
                 primaryKey: true,
                 type: Sequelize.INTEGER
             },
-            company_name: {
-                type: Sequelize.STRING
+            company_id: {
+                type: Sequelize.INTEGER,
+                allowNull: false
             },
-            address: {
-                allowNull: true,
-                type: Sequelize.STRING
+            name: {
+                type: Sequelize.STRING,
+                allowNull: false
             },
+            description: {
+                type: Sequelize.STRING,
+                allowNull: true
+            },
+
             created_at: {
                 allowNull: true,
                 type: Sequelize.DATE
@@ -26,6 +32,6 @@ module.exports = {
     },
 
     down: async (queryInterface, Sequelize) => {
-        await queryInterface.dropTable('companies');
+        await queryInterface.dropTable('inventory_tags');
     }
 };
