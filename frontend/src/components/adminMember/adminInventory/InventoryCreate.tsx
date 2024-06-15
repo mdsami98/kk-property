@@ -1,21 +1,24 @@
 import React, { useState } from 'react';
 import { Input, Select, Button, message, Spin } from 'antd';
-import { useGetAllTagsQuery } from '@/redux/slice/inventory/inventorySlice';
+import {
+    useCreateInventoryMutation,
+    useGetAllTagsQuery
+} from '@/redux/slice/inventory/inventorySlice';
 
 interface MemberAddFormProps {
     createSuccess: Function;
 }
 const InventoryCreate: React.FC<MemberAddFormProps> = ({ createSuccess }) => {
     const { TextArea } = Input;
-    // const [addMember] = useAddMemberByAdminMutation();
+    const [createInventory] = useCreateInventoryMutation();
     const [defaultValue, setDefaultValue] = useState([]);
     const { data: tags, isLoading: tagIsLoading } = useGetAllTagsQuery();
 
     const [formData, setFormData] = useState({
         name: '',
         pcode: '',
-        quantity: '',
-        unit_price: '',
+        quantity: 0,
+        unit_price: 0,
         tags: [],
         description: ''
     });
@@ -52,42 +55,35 @@ const InventoryCreate: React.FC<MemberAddFormProps> = ({ createSuccess }) => {
 
         console.log(formData);
 
-        // try {
-        //     console.log(formData);
-        //     addMember(formData)
-        //         .unwrap()
-        //         .then((response: any) => {
-        //             if (response.status) {
-        //                 console.log(response);
-        //                 message.success(response.message);
-        //                 setFormData((prev) => ({
-        //                     ...prev,
-        //                     name: '',
-        //                     lastName: '',
-        //                     phone_number: '',
-        //                     email: '',
-        //                     password: '',
-        //                     confirmPassword: '',
-        //                     memberType: 2
-        //                 }));
-        //                 memberCreateSuccess();
+        try {
+            createInventory(formData)
+                .unwrap()
+                .then((response: any) => {
+                    if (response.status) {
+                        message.success(response.message);
+                        setFormData((prev) => ({
+                            ...prev,
+                            name: '',
+                            pcode: '',
+                            quantity: 0,
+                            unit_price: 0,
+                            tags: [],
+                            description: ''
+                        }));
+                        createSuccess();
+                    }
+                })
+                .catch((error: any) => {
+                    message.error('Sorry Something Wrong Please Try Again');
+                });
 
-        //                 // if (role == 2) {
-        //                 //     router.push('/investors');
-        //                 // }
-        //             }
-        //         })
-        //         .catch((error: any) => {
-        //             message.error('Sorry Something Wrong Please Try Again');
-        //         });
-
-        //     // const response = await axios.post('/api/member', formData);
-        //     // if (response.status === 200) {
-        //     //     message.success('Member added successfully');
-        //     // }
-        // } catch (error) {
-        //     message.error('Error adding member');
-        // }
+            // const response = await axios.post('/api/member', formData);
+            // if (response.status === 200) {
+            //     message.success('Member added successfully');
+            // }
+        } catch (error) {
+            message.error('Error adding member');
+        }
     };
 
     const textAreaOnChange = (
@@ -188,6 +184,7 @@ const InventoryCreate: React.FC<MemberAddFormProps> = ({ createSuccess }) => {
                             placeholder='Enter Unit Price'
                             value={formData.unit_price}
                             onChange={handleChange}
+                            type='number'
                         />
                     </div>
                 </div>
