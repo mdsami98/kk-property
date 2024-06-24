@@ -14,6 +14,16 @@ module.exports = {
                 allowNull: true,
                 type: Sequelize.STRING
             },
+            total_amount: {
+                allowNull: false,
+                type: Sequelize.FLOAT,
+                default: 0
+            },
+            total_invest_amount: {
+                allowNull: false,
+                type: Sequelize.FLOAT,
+                defaultValue: 0
+            },
             created_at: {
                 allowNull: true,
                 type: Sequelize.DATE
