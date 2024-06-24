@@ -20,7 +20,9 @@ class UserService {
             const data = {
                 company_name: companies
                     ? `Company ${companies.length + 1}`
-                    : 'Company 1'
+                    : 'Company 1',
+                total_amount: 0,
+                total_invest_amount: 0
             };
             const company = await this.companyDao.create(data);
             console.log(company);

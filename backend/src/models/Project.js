@@ -49,6 +49,9 @@ module.exports = (sequelize, DataTypes) => {
             selling_price: {
                 type: DataTypes.FLOAT
             },
+            sold: {
+                type: DataTypes.BOOLEAN
+            },
             created_at: {
                 type: DataTypes.DATE,
                 allowNull: true

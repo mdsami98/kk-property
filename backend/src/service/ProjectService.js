@@ -2,6 +2,7 @@ const { Op } = require('sequelize');
 const httpStatus = require('http-status');
 const config = require('../config/config');
 const ProjectDao = require('../dao/ProjectDao');
+const CompanyDao = require('../dao/CompanyDao');
 const PlotDao = require('../dao/PlotDao');
 const responseHandler = require('../helper/responseHandler');
 
@@ -9,6 +10,7 @@ class ProjectService {
     constructor() {
         this.projectDao = new ProjectDao();
         this.plotDao = new PlotDao();
+        this.companyDao = new CompanyDao();
     }
 
     projectCreate = async (req) => {
@@ -34,29 +36,53 @@ class ProjectService {
                 name: projectName,
                 address,
                 area,
-                unit_price: unitPrice,
-                total_price: totalPrice,
-                selling_price: sellingPrice,
+                unit_price: unitPrice ? Number(unitPrice).toFixed(2) : 0,
+                total_price: totalPrice ? Number(totalPrice).toFixed(2) : 0,
+                selling_price: sellingPrice
+                    ? Number(sellingPrice).toFixed(2)
+                    : 0,
                 company_id,
-                user_uuid: uuid
+                user_uuid: uuid,
+                sold: false
             });
-
+            let totalInvestPaymentByInvestor = 0;
             // Create the plots
             if (plots && plots.length > 0) {
                 for (const plot of plots) {
+                    const investorInvestAmount = plot.investAmount
+                        ? Number(plot.investAmount).toFixed(2)
+                        : 0;
+                    totalInvestPaymentByInvestor = +investorInvestAmount;
                     await this.plotDao.create({
                         project_id: project.id,
                         plot_id: plot.plotId,
                         plot_code: plot.plotNumber,
                         investor_id: plot.investor,
-                        invest_amount: plot.investAmount,
-                        due_amount: plot.dueAmount,
-                        selling_price: plot.sellPrice,
-                        company_id
-                        // created_at: new Date(),
-                        // updated_at: new Date()
+                        invest_amount: investorInvestAmount,
+                        due_amount: plot.dueAmount
+                            ? Number(plot.dueAmount).toFixed(2)
+                            : 0,
+                        selling_price: plot.sellPrice
+                            ? Number(plot.sellPrice).toFixed(2)
+                            : 0,
+                        company_id,
+                        sold: false
                     });
                 }
+            }
+            const companyInfo = await this.companyDao.findById(company_id);
+            if (companyInfo) {
+                await this.companyDao.updateById(
+                    {
+                        total_invest_amount:
+                            companyInfo.total_invest_amount +
+                            Number(totalPrice).toFixed(2),
+                        total_amount:
+                            companyInfo.total_amount +
+                            totalInvestPaymentByInvestor
+                    },
+                    company_id
+                );
             }
 
             // Commit the transaction

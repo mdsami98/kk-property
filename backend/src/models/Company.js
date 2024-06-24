@@ -24,6 +24,8 @@ module.exports = (sequelize, DataTypes) => {
             },
             company_name: DataTypes.STRING,
             address: DataTypes.STRING,
+            total_amount: DataTypes.FLOAT,
+            total_invest_amount: DataTypes.FLOAT,
             created_at: {
                 type: DataTypes.DATE,
                 allowNull: true

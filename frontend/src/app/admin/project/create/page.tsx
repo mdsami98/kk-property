@@ -45,10 +45,14 @@ function reducer(state, action) {
             }
             return updatedState;
         case 'ADD_PLOT':
+            let newError = { ...state.errors };
+            delete newError.plots;
             return {
                 ...state,
+                errors: { ...newError },
                 plots: [
                     ...state.plots,
+
                     {
                         plotId: generateUniqueString(),
                         plotNumber: '',
@@ -153,6 +157,7 @@ const ProjectForm = () => {
         if (!state.address) errors.address = 'Address is required';
         if (!state.area) errors.area = 'Area is required';
         if (!state.unitPrice) errors.unitPrice = 'Unit Price is required';
+        // if (state.plots <= 0) errors.plots = 'You Have To Add Plots';
 
         return errors;
     };
@@ -160,10 +165,10 @@ const ProjectForm = () => {
     const validatePlotFields = (plot) => {
         const errors = {};
         if (!plot.plotNumber) errors.plotNumber = 'Plot Number is required';
-        if (!plot.investor) errors.investor = 'Investor is required';
-        if (!plot.investAmount)
-            errors.investAmount = 'Invest Amount is required';
-        if (!plot.dueAmount) errors.dueAmount = 'Due Amount is required';
+        // if (!plot.investor) errors.investor = 'Investor is required';
+        // if (!plot.investAmount)
+        //     errors.investAmount = 'Invest Amount is required';
+        // if (!plot.dueAmount) errors.dueAmount = 'Due Amount is required';
         // if (!plot.other) errors.other = 'Other is required';
         return errors;
     };
@@ -178,6 +183,7 @@ const ProjectForm = () => {
 
     const handleSubmit = () => {
         const errors = validateFields();
+        console.log(errors);
         if (Object.keys(errors).length > 0) {
             dispatch({ type: 'SET_ERRORS', errors });
             return;
@@ -360,6 +366,11 @@ const ProjectForm = () => {
                 >
                     Add Plot +
                 </Button>
+                {state.errors.plots && (
+                    <p className='text-red mt-1 ml-2 text-sm'>
+                        {state.errors.plots}
+                    </p>
+                )}
             </div>
             {state.plots.map((plot) => (
                 <div key={plot.plotId} className='mt-4 border p-4 rounded'>

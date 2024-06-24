@@ -38,12 +38,17 @@ module.exports = {
             selling_price: {
                 type: Sequelize.FLOAT
             },
-            created_at: {
+            sold: {
+                type: Sequelize.BOOLEAN,
                 allowNull: false,
+                default: false
+            },
+            created_at: {
+                allowNull: true,
                 type: Sequelize.DATE
             },
             updated_at: {
-                allowNull: false,
+                allowNull: true,
                 type: Sequelize.DATE
             }
         });

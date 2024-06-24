@@ -1,7 +1,7 @@
 const { Model } = require('sequelize');
 
 module.exports = (sequelize, DataTypes) => {
-    class Plot extends Model {
+    class Tag extends Model {
         /**
          * Helper method for defining associations.
          * This method is not a part of Sequelize lifecycle.
@@ -9,14 +9,12 @@ module.exports = (sequelize, DataTypes) => {
          */
         static associate(models) {
             // define association here
-            // For example, if plots belong to a company, project, and investor, you can add:
-            // Plot.belongsTo(models.Company, { foreignKey: 'company_id' });
-            // Plot.belongsTo(models.Project, { foreignKey: 'project_id' });
-            // Plot.belongsTo(models.Investor, { foreignKey: 'investor_id' });
+            // For example, if projects belong to users, you can add:
+            // Project.belongsTo(models.User, { foreignKey: 'user_uuid', targetKey: 'uuid' });
         }
     }
 
-    Plot.init(
+    Tag.init(
         {
             id: {
                 type: DataTypes.INTEGER,
@@ -28,35 +26,13 @@ module.exports = (sequelize, DataTypes) => {
                 type: DataTypes.INTEGER,
                 allowNull: false
             },
-            project_id: {
-                type: DataTypes.INTEGER,
-                allowNull: false
-            },
-            plot_id: {
+            name: {
                 type: DataTypes.STRING,
                 allowNull: false
             },
-            plot_code: {
+            description: {
                 type: DataTypes.STRING,
-                allowNull: false
-            },
-            investor_id: {
-                type: DataTypes.INTEGER,
-                allowNull: false
-            },
-            invest_amount: {
-                type: DataTypes.FLOAT,
-                allowNull: false
-            },
-            due_amount: {
-                type: DataTypes.FLOAT,
-                allowNull: false
-            },
-            selling_price: {
-                type: DataTypes.FLOAT
-            },
-            sold: {
-                type: DataTypes.BOOLEAN
+                allowNull: true
             },
             created_at: {
                 type: DataTypes.DATE,
@@ -69,9 +45,10 @@ module.exports = (sequelize, DataTypes) => {
         },
         {
             sequelize,
-            modelName: 'plot',
+            modelName: 'inventory_tag',
+            tableName: 'inventory_tags',
             underscored: true
         }
     );
-    return Plot;
+    return Tag;
 };
