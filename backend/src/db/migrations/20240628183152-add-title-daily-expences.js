@@ -7,6 +7,10 @@ module.exports = {
                 primaryKey: true,
                 type: Sequelize.INTEGER
             },
+            company_id: {
+                type: Sequelize.INTEGER,
+                allowNull: false
+            },
             add_by: {
                 type: Sequelize.UUID,
                 allowNull: false

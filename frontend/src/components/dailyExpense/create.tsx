@@ -96,18 +96,9 @@ const DailyExpenseCreateForm: React.FC<DailyExpenseCreateFormProps> = ({
                 .then((response: any) => {
                     if (response.status) {
                         message.success(response.message);
-                        // setFormData((prev) => ({
-                        //     ...prev,
-                        //     name: '',
-                        //     pcode: '',
-                        //     quantity: 0,
-                        //     unit_price: 0,
-                        //     tags: [],
-                        //     description: ''
-                        // }));
                         createSuccess();
                         setDisableBtn(false);
-                        router.push('/daily-expenses');
+                        // router.push('/daily-expenses');
                     }
                 })
                 .catch((error: any) => {

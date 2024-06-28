@@ -22,6 +22,10 @@ module.exports = (sequelize, DataTypes) => {
                 autoIncrement: true,
                 primaryKey: true
             },
+            company_id: {
+                type: DataTypes.INTEGER,
+                allowNull: false
+            },
             add_by: {
                 type: DataTypes.UUID,
                 allowNull: false

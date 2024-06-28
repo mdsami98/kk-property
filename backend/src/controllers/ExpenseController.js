@@ -19,6 +19,16 @@ class ExpenseController {
             res.status(httpStatus.BAD_GATEWAY).send(e);
         }
     };
+
+    getExpenseDataTable = async (req, res) => {
+        try {
+            const response = await this.expenseService.getExpenseDataTable(req);
+            res.status(response.statusCode).send(response.response);
+        } catch (e) {
+            logger.error(e);
+            res.status(httpStatus.BAD_GATEWAY).send(e);
+        }
+    };
 }
 
 module.exports = ExpenseController;

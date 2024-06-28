@@ -4,9 +4,8 @@ import React, { useState } from 'react';
 import { Button } from 'antd';
 import { useRouter } from 'next/navigation';
 import CustomModal from '@/components/Modal';
-import InventoryDataTable from '@/components/admin/inventory/table';
 import DailyExpenseCreateForm from '@/components/dailyExpense/create';
-import { useCreateExpenseMutation } from '@/redux/slice/expense/expenseApiSlice';
+import DailyExpenseDataTable from "@/components/dailyExpense/dailyExpenseDataTable";
 
 export default function AdminDashboard() {
     const router = useRouter();
@@ -33,7 +32,7 @@ export default function AdminDashboard() {
                     Add Expense
                 </Button>
                 <div className='mt-5'>
-                    <InventoryDataTable />
+                    <DailyExpenseDataTable />
                 </div>
             </div>
 

@@ -15,16 +15,16 @@ const expenseApiSlice: any = apiSlice.injectEndpoints({
         //     }),
         //     transformResponse: (response: any) => response.data
         // }),
-        // getInventoryDataTable: build.query({
-        //     query: (params: any) => ({
-        //         url: `inventory/?page=${params.currentPage}&limit=${params.rowLimit}&search_key=${params.searchKey}`
-        //     }),
-        //     transformResponse: (response: any) => response.data,
-        //     providesTags: ['inventory']
-        // }),
+        getExpenseDataTable: build.query({
+            query: (params: any) => ({
+                url: `/expense/?page=${params.currentPage}&limit=${params.rowLimit}&search_key=${params.searchKey}`
+            }),
+            transformResponse: (response: any) => response.data,
+            providesTags: ['expense']
+        }),
         createExpense: build.mutation({
             query: (payload: DailyExpenseInput) => ({
-                url: `/inventory/create-new-inventory`,
+                url: `/expense`,
                 method: 'POST',
                 body: payload
             }),
@@ -34,8 +34,5 @@ const expenseApiSlice: any = apiSlice.injectEndpoints({
     })
 });
 
-export const {
-    // useGetAllTagsQuery,
-    // useGetInventoryDataTableQuery,
-    useCreateExpenseMutation
-} = expenseApiSlice;
+export const { useGetExpenseDataTableQuery, useCreateExpenseMutation } =
+    expenseApiSlice;
