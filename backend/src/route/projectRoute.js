@@ -17,7 +17,7 @@ router.get(
 router.post(
     '/',
     auth(),
-    projectValidator.projectCreateValidation,
+    // projectValidator.projectCreateValidation,
     projectController.projectCreate
 );
 

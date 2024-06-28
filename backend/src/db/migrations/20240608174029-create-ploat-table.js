@@ -35,8 +35,13 @@ module.exports = {
                 allowNull: false,
                 type: Sequelize.FLOAT
             },
-            selling_price: {
-                type: Sequelize.FLOAT
+            total_payable: {
+                type: Sequelize.FLOAT,
+                allowNull: true
+            },
+            area: {
+                type: Sequelize.FLOAT,
+                allowNull: true
             },
             sold: {
                 type: Sequelize.BOOLEAN,

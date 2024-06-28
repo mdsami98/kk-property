@@ -52,7 +52,10 @@ module.exports = (sequelize, DataTypes) => {
                 type: DataTypes.FLOAT,
                 allowNull: false
             },
-            selling_price: {
+            total_payable: {
+                type: DataTypes.FLOAT
+            },
+            area: {
                 type: DataTypes.FLOAT
             },
             sold: {
