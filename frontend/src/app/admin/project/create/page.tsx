@@ -16,7 +16,7 @@ const initialState = {
     area: 0,
     unitPrice: 0,
     totalPrice: 0,
-    sellingPrice: 0,
+    sellingPricePerUnit: 0,
     plots: [],
     errors: {}
 };
@@ -39,9 +39,6 @@ function reducer(state, action) {
                         : state.unitPrice;
                 updatedState.totalPrice =
                     parseFloat(area) * parseFloat(unitPrice) || 0;
-
-                updatedState.sellingPrice =
-                    parseFloat(area) * parseFloat(unitPrice) || 0;
             }
             return updatedState;
         case 'ADD_PLOT':
@@ -52,13 +49,15 @@ function reducer(state, action) {
                 errors: { ...newError },
                 plots: [
                     ...state.plots,
-
                     {
                         plotId: generateUniqueString(),
                         plotNumber: '',
+                        area: 0,
+                        totalPayable: 0,
+                        pay: 0,
+                        dueAmount: 0,
                         investor: null,
                         investAmount: 0,
-                        dueAmount: 0,
                         sellPrice: 0,
                         errors: {}
                     }
@@ -79,7 +78,32 @@ function reducer(state, action) {
                         ? {
                               ...plot,
                               [action.field]: action.value,
-                              errors: { ...plot.errors, [action.field]: '' }
+                              errors: { ...plot.errors, [action.field]: '' },
+                              ...(action.field === 'area' ||
+                              action.field === 'sellPrice'
+                                  ? {
+                                        totalPayable:
+                                            Number(action.value) *
+                                                state.sellingPricePerUnit || 0
+                                        // parseFloat(
+                                        //     action.field === 'area'
+                                        //         ? action.value
+                                        //         : plot.area
+                                        // ) *
+                                        //     parseFloat(
+                                        //         action.field === 'sellPrice'
+                                        //             ? action.value
+                                        //             : plot.sellPrice
+                                        //     ) || 0
+                                    }
+                                  : {}),
+                              ...(action.field === 'pay'
+                                  ? {
+                                        dueAmount:
+                                            Number(plot.totalPayable) -
+                                                parseFloat(action.value) || 0
+                                    }
+                                  : {})
                           }
                         : plot
                 )
@@ -96,17 +120,7 @@ function reducer(state, action) {
                 )
             };
         case 'RESET_STATE':
-            return {
-                ...state,
-                projectName: '',
-                address: '',
-                area: 0,
-                unitPrice: 0,
-                totalPrice: 0,
-                sellingPrice: 0,
-                plots: [],
-                errors: {}
-            };
+            return initialState;
         default:
             throw new Error();
     }
@@ -116,14 +130,12 @@ const ProjectForm = () => {
     const router = useRouter();
     const { data: investors, isLoading } =
         useGetAllInvestorsForProjectCreateQuery();
-
     const [projectCreate] = useProjectCreateMutation();
+    const [state, dispatch] = useReducer(reducer, initialState);
 
-    console.log(investors);
     const handleBackButtonClick = () => {
         router.push('/admin/project');
     };
-    const [state, dispatch] = useReducer(reducer, initialState);
 
     const handleChange = (e) => {
         dispatch({
@@ -157,7 +169,6 @@ const ProjectForm = () => {
         if (!state.address) errors.address = 'Address is required';
         if (!state.area) errors.area = 'Area is required';
         if (!state.unitPrice) errors.unitPrice = 'Unit Price is required';
-        // if (state.plots <= 0) errors.plots = 'You Have To Add Plots';
 
         return errors;
     };
@@ -165,11 +176,10 @@ const ProjectForm = () => {
     const validatePlotFields = (plot) => {
         const errors = {};
         if (!plot.plotNumber) errors.plotNumber = 'Plot Number is required';
-        // if (!plot.investor) errors.investor = 'Investor is required';
-        // if (!plot.investAmount)
-        //     errors.investAmount = 'Invest Amount is required';
-        // if (!plot.dueAmount) errors.dueAmount = 'Due Amount is required';
-        // if (!plot.other) errors.other = 'Other is required';
+        if (!plot.area) errors.area = 'Area is required';
+        // if (!plot.sellPrice) errors.sellPrice = 'Sell Price is required';
+        if (!plot.pay) errors.pay = 'Pay is required';
+
         return errors;
     };
 
@@ -182,8 +192,9 @@ const ProjectForm = () => {
     };
 
     const handleSubmit = () => {
+        console.log(state);
+
         const errors = validateFields();
-        console.log(errors);
         if (Object.keys(errors).length > 0) {
             dispatch({ type: 'SET_ERRORS', errors });
             return;
@@ -208,22 +219,22 @@ const ProjectForm = () => {
             });
             return;
         }
+        console.log(state);
+        // return;
 
         // Handle form submission
         projectCreate(state)
             .unwrap()
             .then((response: any) => {
                 if (response.status) {
-                    console.log(response);
                     message.success(response.message);
                     dispatch({ type: 'RESET_STATE' });
                     router.push('/admin/project');
                 }
             })
-            .catch((error: any) => {
-                message.error('Sorry Something Wrong Please Try Again');
+            .catch(() => {
+                message.error('Sorry Something Went Wrong. Please Try Again');
             });
-        // message.success('Form submitted successfully!');
     };
 
     if (isLoading) {
@@ -341,20 +352,21 @@ const ProjectForm = () => {
                 </div>
                 <div>
                     <label
-                        htmlFor='sellingPrice'
+                        htmlFor='sellingPricePerUnit'
                         className='block mb-2 text-sm font-medium text-gray-900 dark:text-white'
                     >
-                        Selling Price
+                        Selling Price Per Unit
                     </label>
                     <Input
-                        name='sellingPrice'
-                        placeholder='Enter Selling Price'
-                        value={state.sellingPrice}
+                        type='number'
+                        name='sellingPricePerUnit'
+                        placeholder='Enter Selling Price Per Unit'
+                        value={state.sellingPricePerUnit}
                         onChange={handleChange}
                     />
-                    {state.errors.sellingPrice && (
+                    {state.errors.sellingPricePerUnit && (
                         <p className='text-red mt-1 ml-2 text-sm'>
-                            {state.errors.sellingPrice}
+                            {state.errors.sellingPricePerUnit}
                         </p>
                     )}
                 </div>
@@ -403,7 +415,6 @@ const ProjectForm = () => {
                             >
                                 Select Investor
                             </label>
-
                             <Select
                                 style={{ width: '100%' }}
                                 value={plot.investor}
@@ -419,7 +430,6 @@ const ProjectForm = () => {
                                     label: investor.label
                                 }))}
                             ></Select>
-
                             {plot.errors.investor && (
                                 <p className='text-red mt-1 ml-2 text-sm'>
                                     {plot.errors.investor}
@@ -428,23 +438,60 @@ const ProjectForm = () => {
                         </div>
                         <div>
                             <label
-                                htmlFor={`investAmount-${plot.plotId}`}
+                                htmlFor={`area-${plot.plotId}`}
                                 className='block mb-2 text-sm font-medium text-gray-900 dark:text-white'
                             >
-                                Invest Amount
+                                Area
                             </label>
                             <Input
                                 type='number'
-                                name='investAmount'
-                                placeholder='Enter Invest Amount'
-                                value={plot.investAmount}
+                                name='area'
+                                placeholder='Enter Area'
+                                value={plot.area}
                                 onChange={(e) =>
                                     handlePlotChange(plot.plotId, e)
                                 }
                             />
-                            {plot.errors.investAmount && (
+                            {plot.errors.area && (
                                 <p className='text-red mt-1 ml-2 text-sm'>
-                                    {plot.errors.investAmount}
+                                    {plot.errors.area}
+                                </p>
+                            )}
+                        </div>
+                        <div>
+                            <label
+                                htmlFor={`totalPayable-${plot.plotId}`}
+                                className='block mb-2 text-sm font-medium text-gray-900 dark:text-white'
+                            >
+                                Total Payable
+                            </label>
+                            <Input
+                                type='number'
+                                name='totalPayable'
+                                value={plot.totalPayable}
+                                onChange={handleChange}
+                                disabled
+                            />
+                        </div>
+                        <div>
+                            <label
+                                htmlFor={`pay-${plot.plotId}`}
+                                className='block mb-2 text-sm font-medium text-gray-900 dark:text-white'
+                            >
+                                Pay
+                            </label>
+                            <Input
+                                type='number'
+                                name='pay'
+                                placeholder='Enter Pay'
+                                value={plot.pay}
+                                onChange={(e) =>
+                                    handlePlotChange(plot.plotId, e)
+                                }
+                            />
+                            {plot.errors.pay && (
+                                <p className='text-red mt-1 ml-2 text-sm'>
+                                    {plot.errors.pay}
                                 </p>
                             )}
                         </div>
@@ -458,59 +505,11 @@ const ProjectForm = () => {
                             <Input
                                 type='number'
                                 name='dueAmount'
-                                placeholder='Enter Due Amount'
                                 value={plot.dueAmount}
-                                onChange={(e) =>
-                                    handlePlotChange(plot.plotId, e)
-                                }
+                                onChange={handleChange}
+                                disabled
                             />
-                            {plot.errors.dueAmount && (
-                                <p className='text-red mt-1 ml-2 text-sm'>
-                                    {plot.errors.dueAmount}
-                                </p>
-                            )}
                         </div>
-                        <div>
-                            <label
-                                htmlFor={`sellPrice-${plot.plotId}`}
-                                className='block mb-2 text-sm font-medium text-gray-900 dark:text-white'
-                            >
-                                Sell Price
-                            </label>
-                            <Input
-                                type='number'
-                                name='sellPrice'
-                                placeholder='Enter Sell Price'
-                                value={plot.sellPrice}
-                                onChange={(e) =>
-                                    handlePlotChange(plot.plotId, e)
-                                }
-                            />
-                            {plot.errors.sellPrice && (
-                                <p className='text-red mt-1 ml-2 text-sm'>
-                                    {plot.errors.sellPrice}
-                                </p>
-                            )}
-                        </div>
-                        {/* <div>
-                            <label
-                                htmlFor={`other-${plot.plotId}`}
-                                className='block mb-2 text-sm font-medium text-gray-900 dark:text-white'
-                            >
-                                Other
-                            </label>
-                            <Input
-                                name='other'
-                                placeholder='Enter Other'
-                                value={plot.other}
-                                onChange={(e) => handlePlotChange(plot.plotId, e)}
-                            />
-                            {plot.errors.other && (
-                                <p className='text-red mt-1 ml-2 text-sm'>
-                                    {plot.errors.other}
-                                </p>
-                            )}
-                        </div> */}
                     </div>
                     <Button
                         onClick={() => removePlot(plot.plotId)}

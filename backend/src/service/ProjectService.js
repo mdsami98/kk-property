@@ -24,7 +24,7 @@ class ProjectService {
             area,
             unitPrice,
             totalPrice,
-            sellingPrice,
+            sellingPricePerUnit,
             plots
         } = projectData;
 
@@ -38,8 +38,8 @@ class ProjectService {
                 area,
                 unit_price: unitPrice ? Number(unitPrice).toFixed(2) : 0,
                 total_price: totalPrice ? Number(totalPrice).toFixed(2) : 0,
-                selling_price: sellingPrice
-                    ? Number(sellingPrice).toFixed(2)
+                selling_price: sellingPricePerUnit
+                    ? Number(sellingPricePerUnit).toFixed(2)
                     : 0,
                 company_id,
                 user_uuid: uuid,
@@ -49,8 +49,8 @@ class ProjectService {
             // Create the plots
             if (plots && plots.length > 0) {
                 for (const plot of plots) {
-                    const investorInvestAmount = plot.investAmount
-                        ? Number(plot.investAmount).toFixed(2)
+                    const investorInvestAmount = plot.pay
+                        ? Number(plot.pay).toFixed(2)
                         : 0;
                     totalInvestPaymentByInvestor = +investorInvestAmount;
                     await this.plotDao.create({
@@ -58,13 +58,13 @@ class ProjectService {
                         plot_id: plot.plotId,
                         plot_code: plot.plotNumber,
                         investor_id: plot.investor,
-                        invest_amount: investorInvestAmount,
                         due_amount: plot.dueAmount
                             ? Number(plot.dueAmount).toFixed(2)
                             : 0,
-                        selling_price: plot.sellPrice
-                            ? Number(plot.sellPrice).toFixed(2)
-                            : 0,
+                        invest_amount: investorInvestAmount,
+                        total_payable: plot.totalPayable,
+                        area: plot.area,
+                        // selling_price: 0,
                         company_id,
                         sold: false
                     });
