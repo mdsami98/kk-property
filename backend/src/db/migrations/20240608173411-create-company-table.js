@@ -16,12 +16,12 @@ module.exports = {
             },
             total_amount: {
                 allowNull: false,
-                type: Sequelize.FLOAT,
+                type: Sequelize.DOUBLE,
                 default: 0
             },
             total_invest_amount: {
                 allowNull: false,
-                type: Sequelize.FLOAT,
+                type: Sequelize.DOUBLE,
                 defaultValue: 0
             },
             created_at: {
