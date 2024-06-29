@@ -10,5 +10,6 @@ const projectValidator = new ProjectValidator();
 
 router.post('/', auth(), expenseController.createDailyExpense);
 router.get('/', auth(), expenseController.getExpenseDataTable);
+router.post('/pay', auth(), expenseController.updatePay);
 
 module.exports = router;

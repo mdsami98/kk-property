@@ -30,9 +30,18 @@ const expenseApiSlice: any = apiSlice.injectEndpoints({
             }),
             invalidatesTags: ['expense'],
             transformResponse: (response: any) => response
-        })
+        }),
+        updatePaymentStatus: build.mutation({
+            query: (payload: any) => ({
+                url: `/expense/pay`,
+                method: 'POST',
+                body: payload
+            }),
+            invalidatesTags: ['expense'],
+            transformResponse: (response: any) => response
+        }),
     })
 });
 
-export const { useGetExpenseDataTableQuery, useCreateExpenseMutation } =
+export const { useGetExpenseDataTableQuery, useCreateExpenseMutation, useUpdatePaymentStatusMutation } =
     expenseApiSlice;

@@ -29,6 +29,15 @@ class ExpenseController {
             res.status(httpStatus.BAD_GATEWAY).send(e);
         }
     };
+    updatePay = async (req, res) => {
+        try {
+            const response = await this.expenseService.updatePay(req);
+            res.status(response.statusCode).send(response.response);
+        } catch (e) {
+            logger.error(e);
+            res.status(httpStatus.BAD_GATEWAY).send(e);
+        }
+    };
 }
 
 module.exports = ExpenseController;
