@@ -21,6 +21,13 @@ router.post(
     projectController.projectCreate
 );
 
+router.get(
+    '/:id',
+    auth(),
+    // projectValidator.projectCreateValidation,
+    projectController.getProject
+);
+
 router.get('/', auth(), projectController.getProjectDataTable);
 
 module.exports = router;

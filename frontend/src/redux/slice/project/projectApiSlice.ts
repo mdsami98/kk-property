@@ -23,12 +23,19 @@ const projectApiSlice: any = apiSlice.injectEndpoints({
             }),
             transformResponse: (response: any) => response.data,
             providesTags: ['member']
-        })
+        }),
+        getProject: build.query({
+            query: (params: any) => ({
+                url: `/project/${params.id}`
+            }),
+            transformResponse: (response: any) => response.data,
+        }),
     })
 });
 
 export const {
     useGetAllInvestorsForProjectCreateQuery,
     useProjectCreateMutation,
-    useGetProjectDataTableQuery
+    useGetProjectDataTableQuery,
+    useGetProjectQuery
 } = projectApiSlice;
