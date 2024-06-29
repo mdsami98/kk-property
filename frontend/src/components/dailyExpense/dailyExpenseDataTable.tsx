@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import dayjs from 'dayjs';
-import { Button, Dropdown, Popconfirm, Space } from 'antd';
+import { Button, message, Popconfirm, Space } from 'antd';
 import type { TableProps } from 'antd';
-import { useGetExpenseDataTableQuery } from "@/redux/slice/expense/expenseApiSlice";
+import {useGetExpenseDataTableQuery, useUpdatePaymentStatusMutation} from "@/redux/slice/expense/expenseApiSlice";
 import DataTable from "@/components/Table/DataTable";
 
 interface DataType {
@@ -22,6 +22,8 @@ function DailyExpenseDataTable() {
     const [openConfirmId, setOpenConfirmId] = useState<string | null>(null);
     const [confirmLoading, setConfirmLoading] = useState(false);
 
+    const [updateStatus] = useUpdatePaymentStatusMutation()
+
     const showPopconfirm = (id: string) => {
         setOpenConfirmId(id);
     };
@@ -29,6 +31,29 @@ function DailyExpenseDataTable() {
     const handleOk = (e:any, recordId:any) => {
         console.log(recordId);
         setConfirmLoading(true);
+        try {
+            updateStatus({id: recordId})
+                .unwrap()
+                .then((response: any) => {
+                    if (response.status) {
+                        message.success(response.message);
+                        setOpenConfirmId(null);
+                        setConfirmLoading(false);
+                        // router.push('/daily-expenses');
+                    }
+                })
+                .catch((error: any) => {
+                    setOpenConfirmId(null);
+                    setConfirmLoading(false);
+                    message.error('Sorry Something Wrong Please Try Again');
+                });
+        } catch (error) {
+            setOpenConfirmId(null);
+            setConfirmLoading(false);
+            message.error('Failed to add daily expense');
+        }
+
+
         setTimeout(() => {
             setOpenConfirmId(null);
             setConfirmLoading(false);
