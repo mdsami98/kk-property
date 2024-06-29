@@ -41,6 +41,15 @@ class ProjectController {
             res.status(httpStatus.BAD_GATEWAY).send(e);
         }
     };
+    getProject = async (req, res) => {
+        try {
+            const response = await this.projectService.getProject(req);
+            res.status(response.statusCode).send(response.response);
+        } catch (e) {
+            logger.error(e);
+            res.status(httpStatus.BAD_GATEWAY).send(e);
+        }
+    };
 }
 
 module.exports = ProjectController;

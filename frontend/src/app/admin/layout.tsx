@@ -6,7 +6,7 @@ import { ReduxProvider } from '@/redux/Provider/ReduxProvider';
 import AdminAuthProvider from '@/middleware/AdminAuthProvider';
 import AdminLayout from '@/components/Layouts/AdminLayout';
 
-export default function RootLayout({ children }) {
+export default function RootLayout({ children }:any) {
     useEffect(() => {}, []);
 
     return (

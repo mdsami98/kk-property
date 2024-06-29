@@ -1,11 +1,13 @@
 import React, { useState } from 'react';
-import { Button, Dropdown, Flex } from 'antd';
-
+import { Button, Dropdown, Menu, Space } from 'antd';
+import { MoreOutlined } from '@ant-design/icons';
 import type { TableProps, MenuProps } from 'antd';
 import DataTable from '../Table/DataTable';
 import { useGetProjectDataTableQuery } from '@/redux/slice/project/projectApiSlice';
+import {useRouter} from "next/navigation";
 
 interface DataType {
+    id: string;
     name: string;
     address: string;
     area: number;
@@ -13,7 +15,10 @@ interface DataType {
     total_price: number;
     selling_price: number;
 }
+
 function ProjectList() {
+    const router = useRouter();
+
     const [currentPage, setCurrentPage] = useState<number>(1);
     const [itemPerPage, setItemPerPage] = useState<number>(10);
     const [filterSearch, setFilterSearch] = useState<string>('');
@@ -32,14 +37,35 @@ function ProjectList() {
         status
     });
 
+    const handleMenuClick = (record: DataType, e: any) => {
+        if (e.key === 'view') {
+            console.log('view', record);
+            router.push('/admin/project/views/' +record.id);
+
+            // Add your edit logic here
+        } else if (e.key === 'delete') {
+            console.log('Delete', record);
+            // Add your delete logic here
+        }
+    };
+
+    const menu = (record: DataType) => (
+        <Menu onClick={(e) => handleMenuClick(record, e)}>
+            <Menu.Item key="view">
+                View
+            </Menu.Item>
+            <Menu.Item key="delete">
+                Delete
+            </Menu.Item>
+        </Menu>
+    );
+
     const columns: TableProps<DataType>['columns'] = [
         {
             title: 'Name',
             dataIndex: 'name',
             key: 'name',
-            render: (text) => {
-                return text;
-            }
+            render: (text) => text,
         },
         {
             title: 'Address',
@@ -65,6 +91,19 @@ function ProjectList() {
             title: 'Selling Price',
             dataIndex: 'selling_price',
             key: 'selling_price'
+        },
+        {
+            title: 'Action',
+            key: 'action',
+            render: (text, record) => (
+                <Dropdown overlay={menu(record)} trigger={['click']}>
+                    <a onClick={e => e.preventDefault()}>
+                        <Space>
+                            <MoreOutlined />
+                        </Space>
+                    </a>
+                </Dropdown>
+            )
         }
     ];
 
@@ -72,9 +111,11 @@ function ProjectList() {
         console.log(page, pageSize);
         setCurrentPage(page);
     };
+
     const handleSearch = (value: string) => {
         setFilterSearch(value);
     };
+
     return (
         <div>
             <DataTable

@@ -148,6 +148,38 @@ class ProjectService {
             );
         }
     };
+
+    getProject = async (req) => {
+        try {
+            const { id } = req.params;
+
+            let project = await this.projectDao.findById(id);
+            if (!project) {
+                return responseHandler.returnError(
+                    httpStatus.NOT_FOUND,
+                    'Project not found. '
+                );
+            }
+
+            const plots = await this.plotDao.findByWhere({project_id:id});
+            if (!plots) {
+                project = {...project.dataValues, plots: []}
+            }
+            project={...project.dataValues, plots:plots}
+
+
+            return responseHandler.returnSuccess(
+                httpStatus.OK,
+                'Project data',
+                project
+            );
+        } catch (e) {
+            return responseHandler.returnError(
+                httpStatus.BAD_REQUEST,
+                'Something went wrong!'
+            );
+        }
+    };
 }
 
 module.exports = ProjectService;
