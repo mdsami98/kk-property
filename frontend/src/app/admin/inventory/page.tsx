@@ -5,7 +5,7 @@ import { Button } from 'antd';
 import { useRouter } from 'next/navigation';
 import InventoryCreate from '@/components/adminMember/adminInventory/InventoryCreate';
 import CustomModal from '@/components/Modal';
-import InventoryDataTable from '@/components/admin/inventory/table';
+import InventoryDataTable from '../../../components/admin/inventory/Table';
 
 export default function AdminDashboard() {
     const router = useRouter();
